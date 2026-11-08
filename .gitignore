@@ -27,6 +27,3 @@ web/
 
 # Raw demo recordings (contain real screen content)
 scripts/demo-video/real/
-
-# Personal notes
-prompt.md
