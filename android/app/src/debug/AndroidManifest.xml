@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Hanya ikut di build debug: alat ukur kelancaran gesture & halaman web untuk rekaman demo. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <activity
+            android:name=".debug.TouchProbeActivity"
+            android:exported="true"
+            android:label="GB Touch Probe"
+            android:theme="@style/Theme.Cursoe" />
+        <activity
+            android:name=".debug.DemoWebActivity"
+            android:exported="true"
+            android:label="Cursoe Demo"
+            android:theme="@style/Theme.Cursoe" />
+    </application>
+</manifest>

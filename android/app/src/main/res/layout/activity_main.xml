@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Halaman utama (portrait): header · ilustrasi · panel lengkung dengan tombol power. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gb_bg"
+    android:orientation="vertical">
+
+    <include layout="@layout/part_header" />
+
+    <LinearLayout
+        android:id="@+id/top_area"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <dev.cursoe.ui.MaxWidthLinearLayout
+            android:id="@+id/banners"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="12dp"
+            app:gbMaxWidth="560dp" />
+
+        <include layout="@layout/part_stage" />
+    </LinearLayout>
+
+    <dev.cursoe.ui.CurvedPanel
+        android:id="@+id/panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp"
+        android:paddingTop="68dp"
+        android:paddingBottom="36dp"
+        app:curveEdge="top"
+        app:curveSize="40dp">
+
+        <include layout="@layout/part_controls" />
+    </dev.cursoe.ui.CurvedPanel>
+</LinearLayout>

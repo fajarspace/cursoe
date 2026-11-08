@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Konten di-scroll di bawah header kaca yang melayang (blur seperti navbar web). -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gb_bg">
+
+    <ScrollView
+        android:id="@+id/scroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="24dp">
+
+        <dev.cursoe.ui.MaxWidthLinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="16dp"
+            app:gbMaxWidth="600dp">
+
+            <!-- Umum -->
+            <TextView style="@style/GbSection" android:text="@string/section_general" />
+
+            <LinearLayout style="@style/GbCard">
+
+                <Switch
+                    android:id="@+id/keep_screen_on"
+                    android:thumbTint="@color/switch_thumb"
+                    android:trackTint="@color/switch_track"
+                    style="@style/GbRow"
+                    android:text="@string/keep_screen_on" />
+            </LinearLayout>
+
+            <!-- Izin -->
+            <TextView style="@style/GbSection" android:text="@string/section_permissions" />
+
+            <LinearLayout style="@style/GbCard">
+
+                <LinearLayout
+                    android:id="@+id/row_accessibility"
+                    style="@style/GbRow">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView style="@style/GbRowTitle" android:text="@string/accessibility_short" />
+
+                        <TextView
+                            android:id="@+id/accessibility_status"
+                            style="@style/GbRowSubtitle" />
+                    </LinearLayout>
+
+                    <TextView style="@style/GbChevron" />
+                </LinearLayout>
+
+                <View style="@style/GbDivider" />
+
+                <LinearLayout
+                    android:id="@+id/row_keyboard"
+                    style="@style/GbRow">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView style="@style/GbRowTitle" android:text="@string/ime_label" />
+
+                        <TextView
+                            android:id="@+id/keyboard_status"
+                            style="@style/GbRowSubtitle" />
+                    </LinearLayout>
+
+                    <TextView style="@style/GbChevron" />
+                </LinearLayout>
+
+                <View style="@style/GbDivider" />
+
+                <!-- Kabel ke Mac tanpa USB debugging: Tethering USB (mode NCM). -->
+                <LinearLayout
+                    android:id="@+id/row_tether"
+                    style="@style/GbRow">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView style="@style/GbRowTitle" android:text="@string/tether_label" />
+
+                        <TextView
+                            android:id="@+id/tether_status"
+                            style="@style/GbRowSubtitle" />
+                    </LinearLayout>
+
+                    <TextView style="@style/GbChevron" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Mac -->
+            <TextView style="@style/GbSection" android:text="@string/paired_title" />
+
+            <LinearLayout style="@style/GbCard">
+
+                <TextView
+                    android:id="@+id/paired"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:lineSpacingExtra="4dp"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="14dp"
+                    android:textColor="@color/gb_text"
+                    android:textSize="16sp" />
+
+                <View style="@style/GbDivider" />
+
+                <TextView
+                    android:id="@+id/forget"
+                    style="@style/GbRow"
+                    android:text="@string/forget_macs"
+                    android:textColor="#E5484D"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <!-- Lanjutan -->
+            <TextView style="@style/GbSection" android:text="@string/section_advanced" />
+
+            <LinearLayout style="@style/GbCard">
+
+                <Switch
+                    android:id="@+id/debug_log"
+                    android:thumbTint="@color/switch_thumb"
+                    android:trackTint="@color/switch_track"
+                    style="@style/GbRow"
+                    android:text="@string/debug_log" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/version"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:textColor="@color/gb_text_secondary"
+                android:textSize="12sp" />
+        </dev.cursoe.ui.MaxWidthLinearLayout>
+    </ScrollView>
+
+    <include
+        layout="@layout/part_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top" />
+</FrameLayout>

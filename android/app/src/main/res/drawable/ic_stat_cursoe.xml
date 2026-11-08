@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dibuat oleh scripts/brand/make-logo.py. Ikon notifikasi & tile (monokrom): simbol Cursoe, berpusat. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+    <group
+        android:scaleX="1.562"
+        android:scaleY="1.562"
+        android:translateX="-17.98"
+        android:translateY="-17.98">
+        <path
+            android:fillColor="#00000000"
+            android:pathData="M46.57,21.39 A16.5,16.5 0 1,0 41.68,46.57"
+            android:strokeColor="#FFFFFFFF"
+            android:strokeLineCap="round"
+            android:strokeWidth="5.83" />
+        <path
+            android:fillColor="#00000000"
+            android:pathData="M37.06,36.11 L41.68,46.57"
+            android:strokeColor="#FFFFFFFF"
+            android:strokeLineCap="round"
+            android:strokeWidth="5.83" />
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M30.57,21.94 L30.57,43.7 L39.71,35.42 L34.58,37.17 L46.45,37.17 Z"
+            android:strokeColor="#FFFFFFFF"
+            android:strokeLineJoin="round"
+            android:strokeWidth="1.2" />
+    </group>
+</vector>

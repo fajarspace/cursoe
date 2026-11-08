@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="gb_bg">#050609</color>
+    <color name="gb_surface">#18181B</color>
+    <color name="gb_text">#F2F3F8</color>
+    <color name="gb_text_secondary">#9BA1BA</color>
+    <color name="gb_divider">#0FFFFFFF</color>
+    <color name="gb_border">#1FFFFFFF</color>
+    <color name="gb_chip">#27272A</color>
+    <color name="gb_switch_off">#3F3F46</color>
+
+    <!-- Panel transfer file: aksen monokrom, putih di mode gelap. -->
+    <color name="gb_ink">#FAFAFA</color>
+    <color name="gb_on_ink">#09090B</color>
+    <color name="gb_glass">#C718181B</color>
+    <color name="gb_glass_chip">#1AFFFFFF</color>
+
+    <!-- Merek lebih terang agar terbaca di atas hitam (web: blue-700) -->
+    <color name="gb_primary">#1D4ED8</color>
+    <color name="gb_panel">#1D4ED8</color>
+    <color name="gb_glass_card">#6B141620</color>
+    <color name="gb_glass_strong">#B8141620</color>
+    <color name="gb_glass_border">#17FFFFFF</color>
+    <color name="gb_ring">#24FFFFFF</color>
+    <color name="gb_halo">#331D4ED8</color>
+    <color name="gb_glow_a">#1D4ED8</color>
+    <color name="gb_glow_b">#1E40AF</color>
+    <color name="gb_glow_c">#172554</color>
+</resources>

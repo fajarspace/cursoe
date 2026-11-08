@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pengingat penyiapan: Aksesibilitas & Keyboard Cursoe. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_dialog"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/setup_title"
+        android:textColor="@color/gb_text"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="@string/setup_subtitle"
+        android:textColor="@color/gb_text_secondary"
+        android:textSize="14sp" />
+
+    <!-- Langkah 1: Aksesibilitas -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/step_accessibility"
+            style="@style/GbStep"
+            android:text="1" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="12dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView style="@style/GbRowTitle" android:text="@string/accessibility_short" />
+
+            <TextView style="@style/GbRowSubtitle" android:text="@string/setup_accessibility_desc" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/action_accessibility"
+            style="@style/GbPill"
+            android:text="@string/enable" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/restricted_hint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="44dp"
+        android:layout_marginTop="8dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:paddingVertical="4dp"
+        android:text="@string/restricted_hint"
+        android:textColor="@color/gb_text"
+        android:textSize="13sp" />
+
+    <!-- Langkah 2: Keyboard -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/step_keyboard"
+            style="@style/GbStep"
+            android:text="2" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="12dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView style="@style/GbRowTitle" android:text="@string/ime_label" />
+
+            <TextView style="@style/GbRowSubtitle" android:text="@string/setup_keyboard_desc" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/action_keyboard"
+            style="@style/GbPill"
+            android:text="@string/enable" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/later"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginTop="20dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="8dp"
+        android:text="@string/later"
+        android:textColor="@color/gb_text_secondary"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+</LinearLayout>

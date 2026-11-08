@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Isi panel: status + tombol power bulat. -->
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:id="@+id/state_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:letterSpacing="0.06"
+        android:textAllCaps="true"
+        android:textColor="@color/gb_text"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/state_subtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:gravity="center"
+        android:maxWidth="420dp"
+        android:textColor="@color/gb_text_secondary"
+        android:textSize="14sp" />
+
+    <FrameLayout
+        android:layout_width="136dp"
+        android:layout_height="136dp"
+        android:layout_marginTop="20dp">
+
+        <View
+            android:id="@+id/halo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_halo" />
+
+        <FrameLayout
+            android:id="@+id/power"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_power_off"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless">
+
+            <ImageView
+                android:id="@+id/power_icon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_power" />
+        </FrameLayout>
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/state_hint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:gravity="center"
+        android:textColor="@color/gb_text_secondary"
+        android:textSize="12sp" />
+</merge>

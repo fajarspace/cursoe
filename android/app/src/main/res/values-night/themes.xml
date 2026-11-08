@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Mode gelap: hitam · putih · blue-800. -->
+    <style name="Theme.Cursoe" parent="android:Theme.DeviceDefault.NoActionBar">
+        <item name="android:windowBackground">@color/gb_bg</item>
+        <item name="android:colorAccent">@color/gb_primary</item>
+        <item name="android:colorControlActivated">@color/gb_primary</item>
+        <item name="android:colorPrimary">@color/gb_primary</item>
+        <item name="android:textColorPrimary">@color/gb_text</item>
+        <item name="android:textColorSecondary">@color/gb_text_secondary</item>
+    </style>
+
+    <style name="Theme.Cursoe.Dialog" parent="android:Theme.DeviceDefault.Dialog.NoActionBar">
+        <item name="android:colorAccent">@color/gb_primary</item>
+    </style>
+</resources>

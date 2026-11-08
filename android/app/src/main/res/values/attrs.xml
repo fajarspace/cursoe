@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Panel berwarna dengan tepi melengkung (tombol power di halaman utama). -->
+    <declare-styleable name="CurvedPanel">
+        <attr name="curveEdge" format="enum">
+            <enum name="top" value="0" />
+            <enum name="start" value="1" />
+        </attr>
+        <attr name="curveSize" format="dimension" />
+    </declare-styleable>
+
+    <!-- LinearLayout dengan lebar maksimum, agar rapi di tablet & layar lipat. -->
+    <declare-styleable name="MaxWidthLinearLayout">
+        <attr name="gbMaxWidth" format="dimension" />
+    </declare-styleable>
+</resources>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Desain "kaca berkabut" seperti web: latar terang/gelap, cahaya biru buram, panel kaca. Mode terang (gelap di values-night). -->
+    <color name="gb_primary">#1E40AF</color>
+    <color name="gb_panel">#1E40AF</color>
+
+    <color name="gb_bg">#F5F6FB</color>
+    <color name="gb_surface">#F4F4F5</color>
+    <color name="gb_text">#0D1020</color>
+    <color name="gb_text_secondary">#565C76</color>
+    <color name="gb_divider">#120D1020</color>
+    <color name="gb_border">#14000000</color>
+    <color name="gb_chip">#E4E4E7</color>
+    <color name="gb_switch_off">#D4D4D8</color>
+
+    <!-- Panel transfer file (gaya kaca seperti Luma): aksen monokrom, hitam di mode terang. -->
+    <color name="gb_ink">#09090B</color>
+    <color name="gb_on_ink">#FFFFFF</color>
+    <color name="gb_glass">#D9FFFFFF</color>
+    <color name="gb_glass_chip">#0F000000</color>
+
+    <!-- Kaca (token sama dengan web: glass, glass-strong, glass-border) -->
+    <color name="gb_glass_card">#85FFFFFF</color>
+    <color name="gb_glass_strong">#C7FFFFFF</color>
+    <color name="gb_glass_border">#BFFFFFFF</color>
+    <color name="gb_ring">#1F0D1020</color>
+    <color name="gb_halo">#1F2563EB</color>
+    <!-- Cahaya buram di latar (web: glow-a/b/c) -->
+    <color name="gb_glow_a">#2563EB</color>
+    <color name="gb_glow_b">#60A5FA</color>
+    <color name="gb_glow_c">#1E40AF</color>
+</resources>

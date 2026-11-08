@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Cursoe</string>
+    <string name="accessibility_label">Cursoe — kursor Mac</string>
+    <string name="accessibility_description">Menampilkan kursor dari Mac dan menjalankan klik, drag, scroll, serta tombol Back/Home/Recents yang Anda kirim dari Mac. Cursoe tidak membaca isi layar. Screenshot hanya diambil saat Anda menekan ⌘⇧S dari Mac, lalu disimpan di HP.</string>
+    <string name="ime_label">Cursoe Keyboard</string>
+    <string name="share_to_mac">Kirim ke Mac</string>
+
+    <!-- Halaman utama -->
+    <string name="settings">Pengaturan</string>
+    <string name="back">Kembali</string>
+    <string name="pin_title">PIN pairing</string>
+    <string name="power_on">Nyalakan Cursoe</string>
+    <string name="power_off">Matikan Cursoe</string>
+
+    <!-- Pengaturan -->
+    <string name="section_general">Umum</string>
+    <string name="section_permissions">Izin</string>
+    <string name="section_advanced">Lanjutan</string>
+    <string name="keep_screen_on">Layar tetap menyala saat terhubung</string>
+    <string name="accessibility_short">Aksesibilitas Cursoe</string>
+    <string name="paired_title">Mac yang dipasangkan</string>
+    <string name="forget_macs">Lupakan semua Mac</string>
+    <string name="debug_log">Log debug (logcat)</string>
+
+    <!-- Pengingat penyiapan -->
+    <string name="setup_title">Selesaikan penyiapan</string>
+    <string name="setup_subtitle">Dua izin agar Mac bisa mengendalikan HP ini.</string>
+    <string name="setup_accessibility_desc">Untuk kursor, klik, dan gestur.</string>
+    <string name="setup_keyboard_desc">Untuk mengetik dari keyboard Mac.</string>
+    <string name="restricted_hint">Jika tombol tidak dapat diaktifkan, buka Info aplikasi › ⋮ › Izinkan setelan terbatas.</string>
+    <string name="enable">Aktifkan</string>
+    <string name="later">Nanti</string>
+    <string name="tether_label">Kabel USB ke Mac (Tethering USB)</string>
+</resources>

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Jaringan lokal: server TCP + iklan NSD/Bonjour -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <!-- Android 17+ (API 37): izin akses perangkat di jaringan lokal -->
+    <uses-permission android:name="android.permission.ACCESS_LOCAL_NETWORK" />
+
+    <!-- Foreground service bertipe connectedDevice (butuh CHANGE_NETWORK_STATE di atas) -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Wi-Fi lock mode low-latency selama kursor Mac aktif di HP -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- Opsional, diberikan lewat adb: menyalakan kembali layanan Aksesibilitas Cursoe
+         tanpa membuka Settings (mematikannya tidak butuh izin ini). -->
+    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
+    <!-- Membaca foto/video yang di-drag dari Galeri ke tepi Mac -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+
+    <!-- Android 11+: agar daftar "Buka dengan…" bisa melihat aplikasi yang cocok dengan jenis file. -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:mimeType="*/*" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.SEND_MULTIPLE" />
+            <data android:mimeType="*/*" />
+        </intent>
+    </queries>
+
+    <application
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Cursoe">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Mac → HP: pilih "Simpan saja" / buka dengan aplikasi / Bagikan… -->
+        <activity
+            android:name=".files.OpenWithActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:taskAffinity=""
+            android:theme="@style/Theme.Cursoe.Sheet" />
+
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false"
+            android:label="@string/settings"
+            android:parentActivityName=".MainActivity" />
+
+        <service
+            android:name=".BridgeService"
+            android:exported="false"
+            android:foregroundServiceType="connectedDevice" />
+
+        <!-- Hanya sistem (pemegang BIND_ACCESSIBILITY_SERVICE) yang bisa mengikat service ini. -->
+        <service
+            android:name=".cursor.CursorService"
+            android:exported="true"
+            android:label="@string/accessibility_label"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_service" />
+        </service>
+
+        <!-- Bagikan › "Kirim ke Mac" -->
+        <activity
+            android:name=".files.ShareToMacActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:label="@string/share_to_mac"
+            android:theme="@style/Theme.Cursoe.Dialog">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="*/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="*/*" />
+            </intent-filter>
+        </activity>
+
+        <!-- Gambar clipboard dari Mac untuk ditempel di aplikasi lain (akses per-URI dari sistem clipboard). -->
+        <provider
+            android:name=".clip.ClipImageProvider"
+            android:authorities="dev.cursoe.clip"
+            android:exported="false"
+            android:grantUriPermissions="true" />
+
+        <!-- Tile Quick Settings untuk menyalakan/mematikan Cursoe dengan cepat. -->
+        <service
+            android:name=".CursoeTileService"
+            android:exported="true"
+            android:icon="@drawable/ic_stat_cursoe"
+            android:label="@string/app_name"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.service.quicksettings.TOGGLEABLE_TILE"
+                android:value="true" />
+        </service>
+
+        <!-- Keyboard (IME) yang menerima ketikan dari Mac. Hanya sistem yang bisa mengikatnya. -->
+        <service
+            android:name=".ime.CursoeKeyboardService"
+            android:exported="true"
+            android:label="@string/ime_label"
+            android:permission="android.permission.BIND_INPUT_METHOD">
+            <intent-filter>
+                <action android:name="android.view.InputMethod" />
+            </intent-filter>
+            <meta-data
+                android:name="android.view.im"
+                android:resource="@xml/method" />
+        </service>
+
+    </application>
+</manifest>

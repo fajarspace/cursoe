@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Mode terang. Saat HP memakai mode gelap, values-night/themes.xml yang dipakai. -->
+    <style name="Theme.Cursoe" parent="android:Theme.DeviceDefault.Light.NoActionBar">
+        <item name="android:windowBackground">@color/gb_bg</item>
+        <item name="android:colorAccent">@color/gb_primary</item>
+        <item name="android:colorControlActivated">@color/gb_primary</item>
+        <item name="android:colorPrimary">@color/gb_primary</item>
+        <item name="android:textColorPrimary">@color/gb_text</item>
+        <item name="android:textColorSecondary">@color/gb_text_secondary</item>
+    </style>
+
+    <style name="Theme.Cursoe.Dialog" parent="android:Theme.DeviceDefault.Light.Dialog.NoActionBar">
+        <item name="android:colorAccent">@color/gb_primary</item>
+    </style>
+
+    <!-- Panel "Buka dengan…": jendela transparan; latar redup & animasi digambar sendiri. -->
+    <style name="Theme.Cursoe.Sheet" parent="android:Theme.Translucent.NoTitleBar">
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:colorAccent">@color/gb_ink</item>
+    </style>
+</resources>

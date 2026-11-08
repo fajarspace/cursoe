@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ilustrasi datar: Mac (kiri) → kursor → HP (kanan). Viewport 320×180. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="320dp" android:height="180dp"
+    android:viewportWidth="320" android:viewportHeight="180">
+
+    <!-- Mac -->
+    <path android:fillColor="#27272A"
+        android:pathData="M32,24 h152 a8,8 0 0 1 8,8 v92 a8,8 0 0 1 -8,8 h-152 a8,8 0 0 1 -8,-8 v-92 a8,8 0 0 1 8,-8 z" />
+    <path android:fillColor="#1E40AF"
+        android:pathData="M34,30 h148 a4,4 0 0 1 4,4 v88 a4,4 0 0 1 -4,4 h-148 a4,4 0 0 1 -4,-4 v-88 a4,4 0 0 1 4,-4 z" />
+    <path android:fillColor="#18181B"
+        android:pathData="M51,44 h86 a5,5 0 0 1 5,5 v54 a5,5 0 0 1 -5,5 h-86 a5,5 0 0 1 -5,-5 v-54 a5,5 0 0 1 5,-5 z" />
+    <path android:fillColor="#FF5F57" android:pathData="M52,51 a2,2 0 1 0 4,0 a2,2 0 1 0 -4,0z" />
+    <path android:fillColor="#FEBC2E" android:pathData="M58,51 a2,2 0 1 0 4,0 a2,2 0 1 0 -4,0z" />
+    <path android:fillColor="#28C840" android:pathData="M64,51 a2,2 0 1 0 4,0 a2,2 0 1 0 -4,0z" />
+    <path android:fillColor="#3F3F46" android:pathData="M52,62h16v3h-16z M52,69h12v3h-12z M52,76h14v3h-14z" />
+    <path android:fillColor="#1E40AF" android:pathData="M77,60h16v16h-16z" />
+    <path android:fillColor="#FAFAFA" android:pathData="M97,60h16v16h-16z" />
+    <path android:fillColor="#3F3F46" android:pathData="M117,60h16v16h-16z" />
+    <path android:fillColor="#E4E4E7" android:pathData="M77,80h16v16h-16z" />
+    <path android:fillColor="#1E40AF" android:pathData="M97,80h16v16h-16z" />
+    <path android:fillColor="#D4D4D8" android:pathData="M117,80h16v16h-16z" />
+    <path android:fillColor="#3F3F46"
+        android:pathData="M12,132 h192 l-6,8 a4,4 0 0 1 -3,1.5 h-174 a4,4 0 0 1 -3,-1.5 z" />
+    <path android:fillColor="#27272A"
+        android:pathData="M94,132 h28 v2 a2,2 0 0 1 -2,2 h-24 a2,2 0 0 1 -2,-2 z" />
+
+    <!-- jejak kursor dari tepi Mac ke HP -->
+    <path android:strokeWidth="2.5" android:strokeLineCap="round" android:fillColor="#00000000"
+        android:strokeColor="#80FFFFFF" android:pathData="M188,72 C210,42 244,46 266,84" />
+
+    <!-- HP -->
+    <path android:fillColor="#27272A"
+        android:pathData="M240,36 h48 a12,12 0 0 1 12,12 v96 a12,12 0 0 1 -12,12 h-48 a12,12 0 0 1 -12,-12 v-96 a12,12 0 0 1 12,-12 z" />
+    <path android:fillColor="#09090B"
+        android:pathData="M241,41 h46 a8,8 0 0 1 8,8 v94 a8,8 0 0 1 -8,8 h-46 a8,8 0 0 1 -8,-8 v-94 a8,8 0 0 1 8,-8 z" />
+    <path android:fillColor="#3F3F46" android:pathData="M240,48h22v4h-22z" />
+    <path android:fillColor="#1E40AF" android:pathData="M244,58 h12 a4,4 0 0 1 4,4 v10 a4,4 0 0 1 -4,4 h-12 a4,4 0 0 1 -4,-4 v-10 a4,4 0 0 1 4,-4 z" />
+    <path android:fillColor="#E4E4E7" android:pathData="M268,58 h12 a4,4 0 0 1 4,4 v10 a4,4 0 0 1 -4,4 h-12 a4,4 0 0 1 -4,-4 v-10 a4,4 0 0 1 4,-4 z" />
+    <path android:fillColor="#3F3F46" android:pathData="M244,80 h12 a4,4 0 0 1 4,4 v10 a4,4 0 0 1 -4,4 h-12 a4,4 0 0 1 -4,-4 v-10 a4,4 0 0 1 4,-4 z" />
+    <path android:fillColor="#1E40AF" android:pathData="M268,80 h12 a4,4 0 0 1 4,4 v10 a4,4 0 0 1 -4,4 h-12 a4,4 0 0 1 -4,-4 v-10 a4,4 0 0 1 4,-4 z" />
+    <path android:fillColor="#FAFAFA" android:pathData="M244,102 h12 a4,4 0 0 1 4,4 v10 a4,4 0 0 1 -4,4 h-12 a4,4 0 0 1 -4,-4 v-10 a4,4 0 0 1 4,-4 z" />
+    <path android:fillColor="#52525B" android:pathData="M268,102 h12 a4,4 0 0 1 4,4 v10 a4,4 0 0 1 -4,4 h-12 a4,4 0 0 1 -4,-4 v-10 a4,4 0 0 1 4,-4 z" />
+    <path android:fillColor="#27272A" android:pathData="M244,128h40v4h-40z M244,136h28v4h-28z" />
+
+    <!-- kursor -->
+    <path android:fillColor="#FFFFFF" android:strokeColor="#09090B" android:strokeWidth="1.6"
+        android:strokeLineJoin="round"
+        android:pathData="M268,84 L268,106 L274,100.5 L278,109 L281.5,107.5 L277.5,99 L285,99 Z" />
+</vector>

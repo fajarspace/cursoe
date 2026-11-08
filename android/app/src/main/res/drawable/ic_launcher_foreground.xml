@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dibuat oleh scripts/brand/make-logo.py. Ikon adaptif 108dp: simbol Cursoe di zona aman, berpusat. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:scaleX="1.15"
+        android:scaleY="1.15"
+        android:translateX="17.2"
+        android:translateY="17.2">
+        <path
+            android:fillColor="#00000000"
+            android:pathData="M46.57,21.39 A16.5,16.5 0 1,0 41.68,46.57"
+            android:strokeColor="#FFFFFF"
+            android:strokeLineCap="round"
+            android:strokeWidth="5.4" />
+        <path
+            android:fillColor="#00000000"
+            android:pathData="M37.06,36.11 L41.68,46.57"
+            android:strokeColor="#FFFFFF"
+            android:strokeLineCap="round"
+            android:strokeWidth="5.4" />
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M30.57,21.94 L30.57,43.7 L39.71,35.42 L34.58,37.17 L46.45,37.17 Z"
+            android:strokeColor="#FFFFFF"
+            android:strokeLineJoin="round"
+            android:strokeWidth="1.2" />
+    </group>
+</vector>

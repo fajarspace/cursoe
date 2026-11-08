@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Area tengah: ilustrasi, atau kartu PIN saat pairing. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"
+    android:padding="24dp">
+
+    <ImageView
+        android:id="@+id/illustration"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:adjustViewBounds="true"
+        android:importantForAccessibility="no"
+        android:maxWidth="440dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/illus_devices" />
+
+    <LinearLayout
+        android:id="@+id/pin_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/bg_card"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingHorizontal="32dp"
+        android:paddingVertical="24dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pin_title"
+            android:textAllCaps="true"
+            android:letterSpacing="0.12"
+            android:textColor="@color/gb_text_secondary"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/pin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="monospace"
+            android:letterSpacing="0.08"
+            android:textColor="@color/gb_text"
+            android:textSize="44sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/pin_hint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:gravity="center"
+            android:maxWidth="280dp"
+            android:textColor="@color/gb_text_secondary"
+            android:textSize="14sp" />
+    </LinearLayout>
+</FrameLayout>

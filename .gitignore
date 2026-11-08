@@ -1,0 +1,32 @@
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+
+# Mac app (SwiftPM)
+mac/.build/
+mac/build/
+mac/.swiftpm/
+
+# Android (Gradle)
+android/.gradle/
+android/.kotlin/
+android/build/
+android/app/build/
+android/local.properties
+
+# Release binaries: published as GitHub Release assets, not committed
+dist/
+*.apk
+*.dmg
+
+# Project website: separate (private) repository, optionally checked out here
+web/
+
+# Raw demo recordings (contain real screen content)
+scripts/demo-video/real/
+
+# Personal notes
+prompt.md
