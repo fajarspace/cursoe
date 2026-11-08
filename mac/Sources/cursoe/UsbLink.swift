@@ -45,9 +45,9 @@ final class UsbLink {
             switch self {
             case .noDevice(let unauthorized):
                 return unauthorized
-                    ? "izinkan “USB debugging” untuk Mac ini di layar HP"
-                    : "nyalakan Tethering USB di HP"
-            case .ready(.tether(let host, let interface, _)): return "tethering USB (\(interface), \(host))"
+                    ? L("allow “USB debugging” for this Mac on the device", "izinkan “USB debugging” untuk Mac ini di layar HP")
+                    : L("turn on USB tethering on the device", "nyalakan Tethering USB di HP")
+            case .ready(.tether(let host, let interface, _)): return L("USB tethering (\(interface), \(host))", "tethering USB (\(interface), \(host))")
             case .ready(.adb): return "USB debugging (adb)"
             }
         }
@@ -153,7 +153,7 @@ final class UsbLink {
         guard count > 0, let reply = String(bytes: buffer[0..<count], encoding: .utf8),
               reply.hasPrefix("CURSOE! ") else { return nil }
         // Format: "CURSOE! id=<id> port=<port> name=<nama…>"
-        guard let range = reply.range(of: " name=") else { return "HP" }
+        guard let range = reply.range(of: " name=") else { return L("Android", "HP") }
         return String(reply[range.upperBound...])
     }
 

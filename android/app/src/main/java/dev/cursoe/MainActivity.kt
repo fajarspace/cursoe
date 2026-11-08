@@ -199,19 +199,19 @@ class MainActivity : Activity() {
         val keyboard = KeyboardStatus.isEnabled(this)
 
         val (title, subtitle) = when {
-            !wanted -> "Ketuk untuk menyalakan" to ""
-            !network -> "Butuh izin jaringan" to "Agar Mac bisa menemukan HP ini"
-            !accessibility -> "Penyiapan belum selesai" to "Aktifkan Aksesibilitas Cursoe"
-            s.remote -> "Kursor Mac aktif" to (s.macName ?: "")
-            s.connected -> "Terhubung" to (s.macName ?: "")
-            s.serviceRunning -> "Menunggu Mac…" to
+            !wanted -> tr("Tap to turn on", "Ketuk untuk menyalakan") to ""
+            !network -> tr("Network permission needed", "Butuh izin jaringan") to tr("So your Mac can find this device", "Agar Mac bisa menemukan HP ini")
+            !accessibility -> tr("Setup isn't finished", "Penyiapan belum selesai") to tr("Turn on Cursoe Accessibility", "Aktifkan Aksesibilitas Cursoe")
+            s.remote -> tr("Mac cursor active", "Kursor Mac aktif") to (s.macName ?: "")
+            s.connected -> tr("Connected", "Terhubung") to (s.macName ?: "")
+            s.serviceRunning -> tr("Waiting for Mac…", "Menunggu Mac…") to
                 (s.ip?.let { if (s.port > 0) "$it:${s.port}" else it } ?: "")
-            else -> "Menyalakan…" to ""
+            else -> tr("Starting…", "Menyalakan…") to ""
         }
         stateTitle.text = title
         stateSubtitle.text = subtitle
         stateSubtitle.visibility = if (subtitle.isEmpty()) View.GONE else View.VISIBLE
-        val hint = if (wanted && s.connected && s.cursorReady && !s.remote) "⌘⌥T di Mac untuk mulai" else ""
+        val hint = if (wanted && s.connected && s.cursorReady && !s.remote) tr("Press ⌘⌥T on your Mac to start", "⌘⌥T di Mac untuk mulai") else ""
         stateHint.text = hint
         stateHint.visibility = if (hint.isEmpty()) View.GONE else View.VISIBLE
 
@@ -228,14 +228,14 @@ class MainActivity : Activity() {
         pinCard.visibility = if (pairing) View.VISIBLE else View.GONE
         illustration.visibility = if (pairing) View.INVISIBLE else View.VISIBLE
         pinText.text = s.pin?.chunked(3)?.joinToString(" ") ?: ""
-        pinHint.text = "Ketik PIN ini di ${s.pinFor ?: "Mac"}"
+        pinHint.text = tr("Enter this PIN on ${s.pinFor ?: "Mac"}", "Ketik PIN ini di ${s.pinFor ?: "Mac"}")
 
         renderBanners(s, wanted, network, accessibility, keyboard)
 
         setupDialog?.takeIf { it.isShowing }?.let { dialog ->
             if (dialog.refresh() || !wanted) {
                 dialog.dismiss()
-                if (wanted) Toast.makeText(this, "Cursoe siap dipakai", Toast.LENGTH_SHORT).show()
+                if (wanted) Toast.makeText(this, tr("Cursoe is ready", "Cursoe siap dipakai"), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -249,20 +249,20 @@ class MainActivity : Activity() {
         bannerKey = key
         banners.removeAllViews()
         if (!wanted) return
-        if (!network) addBanner("Izin jaringan lokal belum diberikan", "Izinkan") { requestRuntimePermissions() }
+        if (!network) addBanner(tr("Local network permission not granted", "Izin jaringan lokal belum diberikan"), tr("Allow", "Izinkan")) { requestRuntimePermissions() }
         if (!accessibility) {
-            addBanner("Aksesibilitas Cursoe belum aktif", "Aktifkan") {
+            addBanner(tr("Cursoe Accessibility is off", "Aksesibilitas Cursoe belum aktif"), tr("Turn on", "Aktifkan")) {
                 CursoeSwitch.enableAccessibility(this)
                 render(BridgeState.current)
             }
         } else if (stalled) {
             // Android menandai layanan "tidak berfungsi" setelah aplikasi crash.
-            addBanner("Aksesibilitas tidak berjalan. Matikan lalu nyalakan lagi.", "Perbaiki") {
+            addBanner(tr("Accessibility isn't running. Turn it off and on again.", "Aksesibilitas tidak berjalan. Matikan lalu nyalakan lagi."), tr("Fix", "Perbaiki")) {
                 // Dengan izin adb: dimulai ulang otomatis; selain itu halaman Aksesibilitas Cursoe.
                 if (!CursoeSwitch.restartAccessibility(this)) CursoeSwitch.openAccessibilitySettings(this, true)
             }
         }
-        if (!keyboard) addBanner("Cursoe Keyboard belum aktif", "Aktifkan") { showSetup() }
+        if (!keyboard) addBanner(tr("Cursoe Keyboard is off", "Cursoe Keyboard belum aktif"), tr("Turn on", "Aktifkan")) { showSetup() }
     }
 
     private fun addBanner(text: String, action: String, onClick: () -> Unit) {

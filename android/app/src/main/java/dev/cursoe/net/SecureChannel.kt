@@ -1,5 +1,6 @@
 package dev.cursoe.net
 
+import dev.cursoe.tr
 import java.nio.ByteBuffer
 import java.security.KeyFactory
 import java.security.KeyPair
@@ -77,9 +78,9 @@ class SecureChannel(
     }
 
     fun open(payload: ByteArray): ByteArray {
-        if (payload.size < 12 + 16) throw SecurityException("frame terlalu pendek")
+        if (payload.size < 12 + 16) throw SecurityException(tr("frame too short", "frame terlalu pendek"))
         val nonce = payload.copyOfRange(0, 12)
-        if (!nonce.contentEquals(nonce(receiveCounter))) throw SecurityException("urutan pesan tidak valid")
+        if (!nonce.contentEquals(nonce(receiveCounter))) throw SecurityException(tr("invalid message order", "urutan pesan tidak valid"))
         receiveCounter++
         receiveCipher.init(Cipher.DECRYPT_MODE, receiveKey, GCMParameterSpec(128, nonce))
         return receiveCipher.doFinal(payload, 12, payload.size - 12)

@@ -44,7 +44,7 @@ class BridgeService : Service(), Session.Host {
     private var fileTransfer: FileTransfer? = null
     private val main = Handler(Looper.getMainLooper())
     @Volatile private var destroyed = false
-    private var statusText = "Menunggu Mac…"
+    private var statusText = tr("Waiting for Mac…", "Menunggu Mac…")
     @Volatile private var stopReason: String? = null
     private var lastScreenKey = ""
 
@@ -100,14 +100,14 @@ class BridgeService : Service(), Session.Host {
         server = BridgeServer(this, this) { port -> BridgeState.update { it.copy(port = port) } }
 
         if (!Permissions.hasLocalNetwork(this)) {
-            stopReason = "Izin jaringan lokal belum diberikan. Buka aplikasi lalu izinkan."
+            stopReason = tr("Local network permission is not granted. Open the app and allow it.", "Izin jaringan lokal belum diberikan. Buka aplikasi lalu izinkan.")
             stopSelf()
             return
         }
 
         BridgeState.update {
             it.copy(
-                serviceRunning = true, connected = false, status = "Menunggu Mac…",
+                serviceRunning = true, connected = false, status = tr("Waiting for Mac…", "Menunggu Mac…"),
                 screen = describeScreen(), ip = Permissions.localIpv4(this),
             )
         }
@@ -134,7 +134,7 @@ class BridgeService : Service(), Session.Host {
                 server.start()
             } catch (e: Exception) {
                 Log.e(TAG, "Server gagal start", e)
-                stopReason = "Server gagal: ${e.message}"
+                stopReason = tr("Server failed: ${e.message}", "Server gagal: ${e.message}")
                 main.post { stopSelf() }
             }
         }
@@ -171,7 +171,7 @@ class BridgeService : Service(), Session.Host {
         thread(name = "gb-stop") { s.stop() }
         notifications.cancel(NOTIF_PIN)
         BridgeState.update {
-            BridgeState.Snapshot(status = stopReason ?: "Layanan mati", cursorReady = InputRouter.cursorReady)
+            BridgeState.Snapshot(status = stopReason ?: tr("Service stopped", "Layanan mati"), cursorReady = InputRouter.cursorReady)
         }
         super.onDestroy()
     }
@@ -190,8 +190,8 @@ class BridgeService : Service(), Session.Host {
         val pretty = pin.chunked(3).joinToString(" ")
         val notification = Notification.Builder(this, CH_PAIRING)
             .setSmallIcon(R.drawable.ic_stat_cursoe)
-            .setContentTitle("PIN pairing: $pretty")
-            .setContentText("Ketik PIN ini di $macName")
+            .setContentTitle(tr("Pairing PIN: $pretty", "PIN pairing: $pretty"))
+            .setContentText(tr("Enter this PIN on $macName", "Ketik PIN ini di $macName"))
             .setContentIntent(openAppIntent())
             .setCategory(Notification.CATEGORY_STATUS)
             .setVisibility(Notification.VISIBILITY_PUBLIC)
@@ -221,9 +221,9 @@ class BridgeService : Service(), Session.Host {
     override fun onAuthenticated(session: Session) {
         if (destroyed || session !== server.current) return
         BridgeState.update {
-            it.copy(connected = true, macName = session.macName, status = "Terhubung ke ${session.macName}")
+            it.copy(connected = true, macName = session.macName, status = tr("Connected to ${session.macName}", "Terhubung ke ${session.macName}"))
         }
-        updateStatusNotification("Terhubung ke ${session.macName}")
+        updateStatusNotification(tr("Connected to ${session.macName}", "Terhubung ke ${session.macName}"))
     }
 
     override fun onClosed(session: Session, reason: String) {
@@ -234,9 +234,9 @@ class BridgeService : Service(), Session.Host {
         setRemoteWifiLock(false)
         fileTransfer?.abortIncoming()
         BridgeState.update {
-            it.copy(connected = false, macName = null, status = "Menunggu Mac… (terakhir: $reason)")
+            it.copy(connected = false, macName = null, status = tr("Waiting for Mac… (last: $reason)", "Menunggu Mac… (terakhir: $reason)"))
         }
-        updateStatusNotification("Menunggu Mac…")
+        updateStatusNotification(tr("Waiting for Mac…", "Menunggu Mac…"))
     }
 
     /** Dipanggil dari thread pembaca jaringan. */
@@ -302,15 +302,15 @@ class BridgeService : Service(), Session.Host {
 
     private fun createChannels() {
         notifications.createNotificationChannel(
-            NotificationChannel(CH_STATUS, "Status koneksi", NotificationManager.IMPORTANCE_LOW)
+            NotificationChannel(CH_STATUS, tr("Connection status", "Status koneksi"), NotificationManager.IMPORTANCE_LOW)
         )
         notifications.createNotificationChannel(
-            NotificationChannel(CH_PAIRING, "PIN pairing", NotificationManager.IMPORTANCE_HIGH)
+            NotificationChannel(CH_PAIRING, tr("Pairing PIN", "PIN pairing"), NotificationManager.IMPORTANCE_HIGH)
         )
     }
 
     private fun startInForeground() {
-        val notification = statusNotification("Menunggu Mac…")
+        val notification = statusNotification(tr("Waiting for Mac…", "Menunggu Mac…"))
         if (Build.VERSION.SDK_INT >= 29) {
             startForeground(NOTIF_STATUS, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE)
         } else {
@@ -356,13 +356,13 @@ class BridgeService : Service(), Session.Host {
         )
         return Notification.Builder(this, CH_STATUS)
             .setSmallIcon(R.drawable.ic_stat_cursoe)
-            .setContentTitle("Cursoe aktif")
+            .setContentTitle(tr("Cursoe is on", "Cursoe aktif"))
             .setContentText(text)
             .setContentIntent(openAppIntent())
             .setDeleteIntent(dismissed)
             .setOngoing(true)
             .setOnlyAlertOnce(true)
-            .addAction(Notification.Action.Builder(null as Icon?, "Matikan", stop).build())
+            .addAction(Notification.Action.Builder(null as Icon?, tr("Turn off", "Matikan"), stop).build())
             .build()
     }
 

@@ -23,10 +23,10 @@ final class RemoteController: InputCaptureDelegate {
 
     /// Diisi AppDelegate dari status koneksi.
     var connected = false {
-        didSet { if !connected { exitRemote(reason: "koneksi ke HP putus", notifyFold: false) } }
+        didSet { if !connected { exitRemote(reason: L("connection to the device lost", "koneksi ke HP putus"), notifyFold: false) } }
     }
     var foldCursorReady = false {
-        didSet { if !foldCursorReady { exitRemote(reason: "kursor HP tidak aktif") } }
+        didSet { if !foldCursorReady { exitRemote(reason: L("device cursor not active", "kursor HP tidak aktif")) } }
     }
 
     var sensitivity: Double {
@@ -36,7 +36,7 @@ final class RemoteController: InputCaptureDelegate {
     var side: FoldSide {
         didSet {
             UserDefaults.standard.set(side.rawValue, forKey: "foldSide")
-            exitRemote(reason: "posisi HP diubah")
+            exitRemote(reason: L("device position changed", "posisi HP diubah"))
             onChange?()
         }
     }
@@ -341,12 +341,12 @@ final class RemoteController: InputCaptureDelegate {
     }
 
     private func refusalReason() -> String? {
-        if !capture.isRunning { return "izin Accessibility Mac belum diberikan" }
-        if !connected { return "HP belum terhubung" }
-        if !foldCursorReady { return "aktifkan Aksesibilitas Cursoe di HP" }
+        if !capture.isRunning { return L("Mac Accessibility permission not granted", "izin Accessibility Mac belum diberikan") }
+        if !connected { return L("device not connected", "HP belum terhubung") }
+        if !foldCursorReady { return L("turn on Cursoe Accessibility on the device", "aktifkan Aksesibilitas Cursoe di HP") }
         // Saat Secure Input aktif (mis. kolom password), event tap tidak menerima tombol,
         // sehingga ⌘⌥T/Esc tidak akan terbaca. Jangan ambil risiko Mac "terkunci".
-        if IsSecureEventInputEnabled() { return "Secure Input macOS aktif (kolom password?)" }
+        if IsSecureEventInputEnabled() { return L("macOS Secure Input is on (password field?)", "Secure Input macOS aktif (kolom password?)") }
         return nil
     }
 }

@@ -4,12 +4,12 @@
 
 | Symptom | What to do |
 |---|---|
-| The Mac menu shows "⚠︎ Beri izin Aksesibilitas…" (grant Accessibility) | Enable Cursoe in *System Settings › Privacy & Security › Accessibility*. After rebuilding without a stable signing certificate, remove and re-add it, or run `tccutil reset Accessibility dev.cursoe.mac`. Running `mac/make-dev-cert.sh` once avoids this. |
-| The Mac keeps showing "Mencari HP…" (searching) | Make sure both devices are on the same network, and that Local Network access is allowed on the Mac and the local network permission on Android. Try the device's hotspot, or **Hubungkan lewat IP…** (connect by IP). |
-| ⌘⌥T only beeps | Read the *Mode:* line in the Mac menu. Usually the Android accessibility service is off, or macOS Secure Input is active (the cursor is in a password field). |
-| The accessibility service is on but "not working" | Android marks a service as crashed after the app crashes. Tap **Perbaiki** (fix) in the Cursoe app, or turn the service off and on again in Settings. |
+| The Mac menu shows "⚠︎ Grant Accessibility Access…" | Enable Cursoe in *System Settings › Privacy & Security › Accessibility*. After rebuilding without a stable signing certificate, remove and re-add it, or run `tccutil reset Accessibility dev.cursoe.mac`. Running `mac/make-dev-cert.sh` once avoids this. |
+| The Mac keeps showing "Searching for your device…" | Make sure both devices are on the same network, and that Local Network access is allowed on the Mac and the local network permission on Android. Try the device's hotspot, or **Connect by IP Address…**. |
+| ⌘⌥T only beeps | The Mac menu shows the reason at the top. Usually the Android accessibility service is off, or macOS Secure Input is active (the cursor is in a password field). |
+| The accessibility service is on but "not working" | Android marks a service as crashed after the app crashes. Tap **Fix** in the Cursoe app, or turn the service off and on again in Settings. |
 | Typing does nothing on Android | Enable **Cursoe Keyboard** in the keyboard list. The Mac menu shows a reminder while it is off. |
-| A gallery photo is rejected when dragged to the Mac | Allow *Photos and videos › Allow all* for Cursoe, or use *Share › Kirim ke Mac*. |
+| A gallery photo is rejected when dragged to the Mac | Allow *Photos and videos › Allow all* for Cursoe, or use *Share › Send to Mac*. |
 | The Mac does not see the USB-tethered device | Check the mode in the Cursoe settings screen. macOS needs NCM, not RNDIS; see [Connection](connection.md#usb-cable). |
 | A banking app refuses to open | Turn off the Cursoe accessibility service in Android Settings while using it, and turn off USB debugging. See [Usage](usage.md#banking-and-security-apps). |
 | Scrolling stutters | Use the USB cable or the device's hotspot. Turn on the debug log and check `adb logcat -s CursoeDbg`. |
@@ -31,7 +31,7 @@ These cannot be avoided with the permissions available to regular apps.
   delivers a drop to an app when the drag started in the app in the foreground. Cursoe saves the file and offers to
   open it in an app instead.
 - **Dragging from Android to the Mac** works only from apps that support drag and drop and provide a photo or video
-  URI (Gallery, Google Photos). For other apps, use *Share › Kirim ke Mac*.
+  URI (Gallery, Google Photos). For other apps, use *Share › Send to Mac*.
 - **Esc ×3** (the safety shortcut) also sends Back to Android for the first two presses.
 - **Hiding the Mac cursor and pausing ⌘⇥** use private macOS APIs. If Apple removes them, only these features stop
   working.

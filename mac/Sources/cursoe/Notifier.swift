@@ -21,8 +21,8 @@ final class Notifier: NSObject, UNUserNotificationCenterDelegate {
                 return
             }
             let content = UNMutableNotificationContent()
-            content.title = "File dari HP"
-            content.body = "\(url.lastPathComponent) tersimpan di Downloads"
+            content.title = L("File from your device", "File dari HP")
+            content.body = L("\(url.lastPathComponent) was saved to Downloads", "\(url.lastPathComponent) tersimpan di Downloads")
             content.sound = .default
             content.userInfo = ["path": url.path]
             center.add(UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil))

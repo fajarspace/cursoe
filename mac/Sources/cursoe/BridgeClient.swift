@@ -32,8 +32,8 @@ enum Transport {
     var label: String {
         switch self {
         case .bonjour: return "Wi-Fi/hotspot"
-        case .manual: return "IP manual"
-        case .usb: return "kabel USB"
+        case .manual: return L("manual IP", "IP manual")
+        case .usb: return L("USB cable", "kabel USB")
         }
     }
 }
@@ -43,7 +43,7 @@ struct LinkSnapshot {
     var screen: ScreenInfo?
     var rttMs: Int?
     var transport: Transport?
-    var usbStatus = "memeriksa…"
+    var usbStatus = L("checking…", "memeriksa…")
 }
 
 private struct MacIdentity {
@@ -157,7 +157,7 @@ final class BridgeClient {
             self.manualPaused = false
             if case .paused = self.snapshot.state { self.snapshot.state = .searching }
             Log.info("Mode koneksi: \(newMode.rawValue)")
-            self.teardown("mode koneksi diubah", retryAfter: 0.2)
+            self.teardown(L("connection mode changed", "mode koneksi diubah"), retryAfter: 0.2)
         }
     }
 
@@ -201,7 +201,7 @@ final class BridgeClient {
             self.manualEndpoint = Self.parseEndpoint(trimmed)
             self.manualPaused = false
             Log.info("Alamat manual: \(self.manualEndpoint.map(Self.describe) ?? "tidak ada")")
-            self.teardown("alamat manual diubah", retryAfter: 0.2)
+            self.teardown(L("manual address changed", "alamat manual diubah"), retryAfter: 0.2)
         }
     }
 
@@ -227,7 +227,7 @@ final class BridgeClient {
             Keychain.deleteAll()
             self.tokenCache.removeAll()
             self.declined.removeAll()
-            self.teardown("semua pairing dihapus", retryAfter: 0.3)
+            self.teardown(L("all pairings removed", "semua pairing dihapus"), retryAfter: 0.3)
         }
     }
 
@@ -352,7 +352,7 @@ final class BridgeClient {
             case .waiting(let error):
                 Log.info("Bonjour menunggu: \(error)")
                 if case .dns(let code) = error, code == -65570 /* kDNSServiceErr_PolicyDenied */ {
-                    self.snapshot.state = .paused("Izin Local Network ditolak. Buka System Settings › Privacy & Security › Local Network, nyalakan cursoe.")
+                    self.snapshot.state = .paused(L("Local Network access was denied. Open System Settings › Privacy & Security › Local Network and turn on Cursoe.", "Izin Local Network ditolak. Buka System Settings › Privacy & Security › Local Network, nyalakan cursoe."))
                     self.publish()
                 }
             case .failed(let error):
@@ -374,7 +374,7 @@ final class BridgeClient {
 
     private static func serviceName(of result: NWBrowser.Result) -> String {
         if case .service(let name, _, _, _) = result.endpoint { return name }
-        return "HP"
+        return L("Android", "HP")
     }
 
     private static func deviceId(of result: NWBrowser.Result) -> String? {
@@ -401,13 +401,13 @@ final class BridgeClient {
         }
         // Kabel USB didahulukan (mode Otomatis / Hanya kabel).
         if mode != .wireless, !usbPaused, let endpoint = usbState.endpoint {
-            connect(to: endpoint, transport: .usb, name: "HP (kabel USB)", deviceId: nil)
+            connect(to: endpoint, transport: .usb, name: L("Android (USB cable)", "HP (kabel USB)"), deviceId: nil)
             return
         }
         if mode == .usb {
             snapshot.state = .paused(usbPaused
-                ? "Pairing lewat kabel dibatalkan. Pilih “Hubungkan ulang”."
-                : "Menunggu HP lewat kabel USB: \(usbState.description)")
+                ? L("Pairing over USB was cancelled. Choose “Reconnect”.", "Pairing lewat kabel dibatalkan. Pilih “Hubungkan ulang”.")
+                : L("Waiting for your device over USB: \(usbState.description)", "Menunggu HP lewat kabel USB: \(usbState.description)"))
             publish()
             return
         }
@@ -426,9 +426,9 @@ final class BridgeClient {
         }
 
         if let first = entries.first {
-            snapshot.state = .paused("Pairing dengan \(first.name) dibatalkan. Pilih “Hubungkan ulang” untuk mencoba lagi.")
+            snapshot.state = .paused(L("Pairing with \(first.name) was cancelled. Choose “Reconnect” to try again.", "Pairing dengan \(first.name) dibatalkan. Pilih “Hubungkan ulang” untuk mencoba lagi."))
         } else if manualPaused {
-            snapshot.state = .paused("Pairing dibatalkan. Pilih “Hubungkan ulang” untuk mencoba lagi.")
+            snapshot.state = .paused(L("Pairing was cancelled. Choose “Reconnect” to try again.", "Pairing dibatalkan. Pilih “Hubungkan ulang” untuk mencoba lagi."))
         } else if case .paused = snapshot.state {
             // pertahankan pesan (mis. izin Local Network)
         } else {
@@ -459,7 +459,7 @@ final class BridgeClient {
             s.viable = viable
             guard !viable else { return }
             self.queue.asyncAfter(deadline: .now() + 1.5) {
-                if self.session === s, !s.viable { self.teardown("jaringan ke HP tidak tersedia", retryAfter: 0.5) }
+                if self.session === s, !s.viable { self.teardown(L("no network path to the device", "jaringan ke HP tidak tersedia"), retryAfter: 0.5) }
             }
         }
         connection.stateUpdateHandler = { [weak self] state in
@@ -472,9 +472,9 @@ final class BridgeClient {
                 self.sendHello(on: s)
                 self.receiveFrame(on: s)
             case .waiting(let error):
-                self.teardown("tidak bisa tersambung (\(error))")
+                self.teardown(L("cannot connect (\(error))", "tidak bisa tersambung (\(error))"))
             case .failed(let error):
-                self.teardown("koneksi gagal (\(error))")
+                self.teardown(L("connection failed (\(error))", "koneksi gagal (\(error))"))
             default:
                 break
             }
@@ -523,7 +523,7 @@ final class BridgeClient {
         ]
         s.hello = Wire.encodeJSON(hello)
         s.connection.send(content: Wire.frame(s.hello), completion: .contentProcessed { [weak self] error in
-            if let error { self?.failIfCurrent(s, "gagal kirim HELLO (\(error))") }
+            if let error { self?.failIfCurrent(s, L("failed to send HELLO (\(error))", "gagal kirim HELLO (\(error))")) }
         })
     }
 
@@ -550,13 +550,13 @@ final class BridgeClient {
             let sealed = try channel.seal(plaintext)
             s.connection.send(content: Wire.frame(sealed), completion: .contentProcessed { [weak self] error in
                 if let error {
-                    self?.failIfCurrent(s, "gagal kirim (\(error))")
+                    self?.failIfCurrent(s, L("send failed (\(error))", "gagal kirim (\(error))"))
                 } else {
                     then?()
                 }
             })
         } catch {
-            teardown("enkripsi gagal (\(error))")
+            teardown(L("encryption failed (\(error))", "enkripsi gagal (\(error))"))
         }
     }
 
@@ -591,20 +591,20 @@ final class BridgeClient {
     private func receiveFrame(on s: Session) {
         s.connection.receive(minimumIncompleteLength: 4, maximumLength: 4) { [weak self] header, _, isComplete, error in
             guard let self, self.session === s else { return }
-            if let error { self.teardown("gagal menerima (\(error))"); return }
+            if let error { self.teardown(L("receive failed (\(error))", "gagal menerima (\(error))")); return }
             guard let header, header.count == 4 else {
-                self.teardown(isComplete ? "HP menutup koneksi" : "header frame rusak")
+                self.teardown(isComplete ? L("the device closed the connection", "HP menutup koneksi") : L("invalid frame header", "header frame rusak"))
                 return
             }
             let length = Wire.readLength(header)
             guard length > 0, length <= Wire.maxFrame else {
-                self.teardown("ukuran frame tidak valid (\(length))")
+                self.teardown(L("invalid frame size (\(length))", "ukuran frame tidak valid (\(length))"))
                 return
             }
             s.connection.receive(minimumIncompleteLength: length, maximumLength: length) { body, _, _, error in
                 guard self.session === s else { return }
-                if let error { self.teardown("gagal menerima (\(error))"); return }
-                guard let body, body.count == length else { self.teardown("frame terpotong"); return }
+                if let error { self.teardown(L("receive failed (\(error))", "gagal menerima (\(error))")); return }
+                guard let body, body.count == length else { self.teardown(L("truncated frame", "frame terpotong")); return }
                 s.lastReceived = .now()
                 self.handleFrame(body, on: s)
                 if self.session === s { self.receiveFrame(on: s) }
@@ -621,7 +621,7 @@ final class BridgeClient {
         do {
             plaintext = try channel.open(payload)
         } catch {
-            teardown("pesan gagal didekripsi (\(error))")
+            teardown(L("message could not be decrypted (\(error))", "pesan gagal didekripsi (\(error))"))
             return
         }
         if plaintext.first == FileTransfer.binaryMarker {
@@ -634,7 +634,7 @@ final class BridgeClient {
             return
         }
         guard let message = Wire.decodeJSON(plaintext), let type = message.string("t") else {
-            teardown("JSON tidak valid")
+            teardown(L("invalid JSON", "JSON tidak valid"))
             return
         }
         if type != "PONG" { Log.debug("← \(type)") }
@@ -644,7 +644,7 @@ final class BridgeClient {
     private func handleHello(_ payload: Data, on s: Session) {
         guard let m = Wire.decodeJSON(payload), m.string("t") == "HELLO", m.int("v") == 1,
               let id = m.string("id"), let nonce = m.base64("nonce"), let epk = m.base64("epk") else {
-            teardown("HELLO dari HP tidak valid")
+            teardown(L("invalid HELLO from the device", "HELLO dari HP tidak valid"))
             return
         }
         s.deviceId = id
@@ -653,7 +653,7 @@ final class BridgeClient {
             s.channel = try SecureChannel(handshake: s.handshake, macHello: s.hello, foldHello: payload,
                                           peerPublicKeyDER: epk, peerNonce: nonce)
         } catch {
-            teardown("handshake gagal (\(error))")
+            teardown(L("handshake failed (\(error))", "handshake gagal (\(error))"))
             return
         }
         Log.info("Kanal terenkripsi siap dengan \(s.name)")
@@ -671,7 +671,7 @@ final class BridgeClient {
         case "AUTH_OK":
             guard let token = s.token, let proof = m.base64("proof"),
                   s.channel!.verify(proof: proof, token: token, label: Self.authFoldLabel) else {
-                teardown("HP gagal membuktikan identitasnya")
+                teardown(L("the device failed to prove its identity", "HP gagal membuktikan identitasnya"))
                 return
             }
             markConnected(s)
@@ -681,7 +681,7 @@ final class BridgeClient {
                 Keychain.delete(id)
                 tokenCache[id] = .some(nil)
             }
-            teardown("HP menolak token (\(m.string("reason") ?? "?")); pairing ulang", retryAfter: 0.5)
+            teardown(L("the device rejected the token (\(m.string("reason") ?? "?")); pairing again", "HP menolak token (\(m.string("reason") ?? "?")); pairing ulang"), retryAfter: 0.5)
 
         case "PAIR_PIN_SHOWN":
             snapshot.state = .awaitingPin(s.name)
@@ -691,15 +691,15 @@ final class BridgeClient {
         case "PAIR_FAIL":
             let left = m.int("left") ?? 0
             if left > 0 {
-                askPin(on: s, message: "PIN salah. Sisa \(left) percobaan.")
+                askPin(on: s, message: L("Wrong PIN. \(left) attempts left.", "PIN salah. Sisa \(left) percobaan."))
             } else {
                 decline(s)
-                teardown("pairing gagal (\(m.string("reason") ?? "PIN salah"))")
+                teardown(L("pairing failed (\(m.string("reason") ?? "wrong PIN"))", "pairing gagal (\(m.string("reason") ?? "PIN salah"))"))
             }
 
         case "PAIR_OK":
             guard let token = m.base64("token"), token.count == 32, let id = s.deviceId else {
-                teardown("PAIR_OK tidak valid")
+                teardown(L("invalid PAIR_OK", "PAIR_OK tidak valid"))
                 return
             }
             Keychain.save(token: token, for: id, deviceName: s.name)
@@ -770,7 +770,7 @@ final class BridgeClient {
                 guard self.session === s, !s.authenticated else { return }
                 guard let pin else {
                     self.decline(s)
-                    self.teardown("pairing dibatalkan pengguna")
+                    self.teardown(L("pairing cancelled by user", "pairing dibatalkan pengguna"))
                     return
                 }
                 self.sendSecure(["t": "PAIR", "pin": pin], on: s)
@@ -808,7 +808,7 @@ final class BridgeClient {
         let fast = fastKeepAliveOnQueue && s.authenticated
         let idle = Double(DispatchTime.now().uptimeNanoseconds - s.lastReceived.uptimeNanoseconds) / 1e9
         if idle > (fast ? 3.5 : 7) {
-            teardown("HP tidak merespons \(String(format: "%.1f", idle)) detik")
+            teardown(L("no response from the device for \(String(format: "%.1f", idle)) s", "HP tidak merespons \(String(format: "%.1f", idle)) detik"))
             return
         }
         if s.channel != nil, fast || tickCount % 2 == 0 {
@@ -824,7 +824,7 @@ final class BridgeClient {
         snapshot.usbStatus = state.description
         publish()
         if let s = session, s.transport == .usb, !state.isReady {
-            teardown("kabel USB dicabut", retryAfter: 0.3) // mode Otomatis: lanjut lewat Wi-Fi/hotspot
+            teardown(L("USB cable unplugged", "kabel USB dicabut"), retryAfter: 0.3) // mode Otomatis: lanjut lewat Wi-Fi/hotspot
             return
         }
         if session == nil {
@@ -839,7 +839,7 @@ final class BridgeClient {
     private func switchToUsbIfBetter() {
         guard mode == .auto, usbState.isReady, !usbPaused, let s = session,
               s.transport != .usb, s.authenticated, !fastKeepAliveOnQueue else { return }
-        teardown("beralih ke kabel USB", retryAfter: 0.1)
+        teardown(L("switching to USB cable", "beralih ke kabel USB"), retryAfter: 0.1)
     }
 
     private static func nowMs() -> Int64 {

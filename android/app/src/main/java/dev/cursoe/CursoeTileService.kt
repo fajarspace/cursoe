@@ -35,7 +35,7 @@ class CursoeTileService : TileService() {
         val on = CursoeSwitch.isOn(this)
         tile.state = if (on) Tile.STATE_ACTIVE else Tile.STATE_INACTIVE
         tile.label = getString(R.string.app_name)
-        if (Build.VERSION.SDK_INT >= 29) tile.subtitle = if (on) "Aktif" else "Mati"
+        if (Build.VERSION.SDK_INT >= 29) tile.subtitle = if (on) tr("On", "Aktif") else tr("Off", "Mati")
         tile.updateTile()
     }
 

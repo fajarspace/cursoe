@@ -1,13 +1,13 @@
 # Connection
 
 Cursoe connects the Mac and the Android device directly: over a USB cable, the device's hotspot, or a shared Wi-Fi
-network. Choose the mode in the Mac menu under **Koneksi**:
+network. Choose the mode in the Mac menu under **Connection**:
 
 | Mode | Behavior |
 |---|---|
-| **Otomatis** (automatic, default) | Uses the USB cable when the device is plugged in, otherwise Wi-Fi or hotspot. Unplugging switches to Wi-Fi or hotspot; plugging in switches back to the cable once the cursor is on the Mac. |
-| **Kabel USB** (USB cable) | Always use the cable. |
-| **Wi-Fi / hotspot** | Bonjour discovery, or a manual IP address. |
+| **Automatic** (default) | Uses the USB cable when the device is plugged in, otherwise Wi-Fi or hotspot. Unplugging switches to Wi-Fi or hotspot; plugging in switches back to the cable once the cursor is on the Mac. |
+| **USB Cable** | Always use the cable. |
+| **Wi-Fi / Hotspot** | Bonjour discovery, or a manual IP address. |
 
 Measured round-trip times (Galaxy Z Fold6 and MacBook Pro):
 
@@ -19,12 +19,12 @@ Measured round-trip times (Galaxy Z Fold6 and MacBook Pro):
 
 ## USB cable
 
-The Mac checks for a cable every 2 seconds and tries two paths. The current status is shown in the **Koneksi**
+The Mac checks for a cable every 2 seconds and tries two paths. The current status is shown in the **Connection**
 submenu.
 
 ### 1. USB tethering (preferred, no USB debugging needed)
 
-- On Android, turn on **USB tethering**. The Cursoe settings screen has a shortcut (**Kabel USB ke Mac**). Android
+- On Android, turn on **USB tethering**. The Cursoe settings screen has a shortcut (**USB cable to Mac**). Android
   turns tethering off whenever the cable is unplugged.
 - The Mac gets a wired network with the device as its gateway. It sends a `CURSOE?` UDP probe to the gateway, the
   device replies with its ID and name, and the Mac connects to `gateway:47800`.
@@ -56,7 +56,7 @@ Charging the device over the same cable is a bonus.
 - **Best option: connect the Mac to the device's hotspot.** Latency is low, usually under 30 ms.
 - **Home Wi-Fi** usually works well.
 - **Office or campus Wi-Fi** often isolates clients on different subnets or blocks multicast. Bonjour cannot find
-  the device there and latency can reach about 100 ms. Use **Hubungkan lewat IP…** (connect by IP) in the Mac menu
+  the device there and latency can reach about 100 ms. Use **Connect by IP Address…** in the Mac menu
   with the address shown in the Android app, for example `10.100.3.145:47800`.
 
 ## Automatic reconnection

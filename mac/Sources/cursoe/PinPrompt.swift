@@ -14,8 +14,8 @@ enum PinPrompt {
         var note = message
         while true {
             let alert = NSAlert()
-            alert.messageText = "Pairing dengan \(device)"
-            alert.informativeText = [note, "Ketik PIN 6 digit yang muncul di notifikasi / aplikasi Cursoe di HP."]
+            alert.messageText = L("Pair with \(device)", "Pairing dengan \(device)")
+            alert.informativeText = [note, L("Enter the 6-digit PIN shown in the Cursoe app or notification on your device.", "Ketik PIN 6 digit yang muncul di notifikasi / aplikasi Cursoe di HP.")]
                 .compactMap { $0 }
                 .joined(separator: "\n\n")
             let field = NSTextField(frame: NSRect(x: 0, y: 0, width: 220, height: 28))
@@ -23,13 +23,13 @@ enum PinPrompt {
             field.font = .monospacedDigitSystemFont(ofSize: 18, weight: .medium)
             alert.accessoryView = field
             alert.addButton(withTitle: "Pair")
-            alert.addButton(withTitle: "Batal")
+            alert.addButton(withTitle: L("Cancel", "Batal"))
             alert.window.initialFirstResponder = field
 
             guard alert.runModal() == .alertFirstButtonReturn else { return nil }
             let pin = field.stringValue.filter { ("0"..."9").contains($0) }
             if pin.count == 6 { return pin }
-            note = "PIN harus 6 digit angka."
+            note = L("The PIN must be 6 digits.", "PIN harus 6 digit angka.")
         }
     }
 

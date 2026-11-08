@@ -79,7 +79,7 @@ only installs an update over an existing app when both are signed with the same 
 ```bash
 # Mac
 log stream --info --predicate 'subsystem == "dev.cursoe.mac"'
-tail -f ~/Library/Logs/Cursoe/cursoe.log          # when "Log debug" is on in the menu
+tail -f ~/Library/Logs/Cursoe/cursoe.log          # when "Debug Log" is on in the menu
 
 # Android
 adb logcat -s Cursoe CursoeDbg

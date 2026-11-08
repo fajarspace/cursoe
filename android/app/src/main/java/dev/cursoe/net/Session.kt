@@ -1,7 +1,7 @@
 package dev.cursoe.net
 
 import android.util.Log
-import org.json.JSONObject
+import dev.cursoe.tr
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
@@ -14,6 +14,7 @@ import java.security.MessageDigest
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.concurrent.thread
+import org.json.JSONObject
 
 /**
  * Satu koneksi dari Mac: handshake, pairing/autentikasi, lalu loop pesan.
@@ -112,7 +113,7 @@ class Session(private val socket: Socket, private val host: Host) {
                 Wire.writeFrame(output, payload)
             }
         } catch (e: Exception) {
-            close("gagal mengirim: ${e.message}")
+            close(tr("send failed: ${e.message}", "gagal mengirim: ${e.message}"))
         } finally {
             closeSocket()
         }
@@ -130,11 +131,11 @@ class Session(private val socket: Socket, private val host: Host) {
                 val message = JSONObject(String(plaintext, Charsets.UTF_8))
                 handle(message.optString("t"), message)
             }
-            "ditutup"
+            tr("closed", "ditutup")
         } catch (_: SocketTimeoutException) {
-            "Mac tidak merespons (timeout)"
+            tr("Mac not responding (timeout)", "Mac tidak merespons (timeout)")
         } catch (_: EOFException) {
-            "Mac menutup koneksi"
+            tr("Mac closed the connection", "Mac menutup koneksi")
         } catch (e: Exception) {
             e.message ?: e.javaClass.simpleName
         }
@@ -144,7 +145,7 @@ class Session(private val socket: Socket, private val host: Host) {
     private fun handshake() {
         val macHello = Wire.readFrame(input)
         val m = JSONObject(String(macHello, Charsets.UTF_8))
-        if (m.optString("t") != "HELLO" || m.optInt("v") != 1) throw IOException("HELLO dari Mac tidak valid")
+        if (m.optString("t") != "HELLO" || m.optInt("v") != 1) throw IOException(tr("invalid HELLO from Mac", "HELLO dari Mac tidak valid"))
         macId = m.getString("id")
         macName = m.optString("name", "Mac")
 
@@ -177,12 +178,12 @@ class Session(private val socket: Socket, private val host: Host) {
         val ch = channel!!
         val token = host.tokenFor(macId)
         if (token == null) {
-            send(JSONObject().put("t", "AUTH_FAIL").put("reason", "Mac belum dipair"))
-            throw IOException("Mac belum dipair")
+            send(JSONObject().put("t", "AUTH_FAIL").put("reason", tr("Mac not paired", "Mac belum dipair")))
+            throw IOException(tr("Mac not paired", "Mac belum dipair"))
         }
         if (!ch.verify(Wire.unb64(m.optString("proof")), token, AUTH_MAC)) {
-            send(JSONObject().put("t", "AUTH_FAIL").put("reason", "token salah"))
-            throw IOException("token Mac salah")
+            send(JSONObject().put("t", "AUTH_FAIL").put("reason", tr("wrong token", "token salah")))
+            throw IOException(tr("wrong Mac token", "token Mac salah"))
         }
         send(JSONObject().put("t", "AUTH_OK").put("proof", Wire.b64(ch.proof(token, AUTH_FOLD))))
         becomeAuthenticated()
@@ -201,8 +202,8 @@ class Session(private val socket: Socket, private val host: Host) {
     private fun onPair(m: JSONObject) {
         val expected = pin
         if (expected == null || System.currentTimeMillis() > pinExpiresAt) {
-            send(JSONObject().put("t", "PAIR_FAIL").put("left", 0).put("reason", "PIN kedaluwarsa"))
-            throw IOException("PIN kedaluwarsa")
+            send(JSONObject().put("t", "PAIR_FAIL").put("left", 0).put("reason", tr("PIN expired", "PIN kedaluwarsa")))
+            throw IOException(tr("PIN expired", "PIN kedaluwarsa"))
         }
         val given = m.optString("pin")
         if (MessageDigest.isEqual(given.toByteArray(), expected.toByteArray())) {
@@ -216,7 +217,7 @@ class Session(private val socket: Socket, private val host: Host) {
         } else {
             pinAttemptsLeft--
             send(JSONObject().put("t", "PAIR_FAIL").put("left", pinAttemptsLeft))
-            if (pinAttemptsLeft <= 0) throw IOException("PIN salah $PIN_ATTEMPTS kali")
+            if (pinAttemptsLeft <= 0) throw IOException(tr("wrong PIN $PIN_ATTEMPTS times", "PIN salah $PIN_ATTEMPTS kali"))
         }
     }
 

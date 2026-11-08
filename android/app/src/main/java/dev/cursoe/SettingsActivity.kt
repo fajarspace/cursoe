@@ -94,15 +94,15 @@ class SettingsActivity : Activity() {
         sky.start()
         val s = BridgeState.current
         accessibilityStatus.text = when {
-            s.cursorReady -> "Aktif"
-            CursoeSwitch.isAccessibilityEnabled(this) -> "Aktif, tetapi tidak berjalan. Matikan, lalu aktifkan kembali."
-            else -> "Belum aktif"
+            s.cursorReady -> tr("On", "Aktif")
+            CursoeSwitch.isAccessibilityEnabled(this) -> tr("On, but not running. Turn it off and on again.", "Aktif, tetapi tidak berjalan. Matikan, lalu aktifkan kembali.")
+            else -> tr("Off", "Belum aktif")
         }
-        keyboardStatus.text = if (KeyboardStatus.isEnabled(this)) "Aktif" else "Belum aktif"
+        keyboardStatus.text = if (KeyboardStatus.isEnabled(this)) tr("On", "Aktif") else tr("Off", "Belum aktif")
         tetherStatus.text = when (UsbTether.mode()) {
-            UsbTether.Mode.NCM -> "Aktif (NCM). Mac terhubung melalui kabel USB."
-            UsbTether.Mode.RNDIS -> "Aktif (RNDIS). Mode ini tidak didukung Mac; gunakan mode NCM."
-            UsbTether.Mode.OFF -> "Nonaktif. Aktifkan setelah kabel USB tersambung ke Mac."
+            UsbTether.Mode.NCM -> tr("On (NCM). Your Mac connects over the USB cable.", "Aktif (NCM). Mac terhubung melalui kabel USB.")
+            UsbTether.Mode.RNDIS -> tr("On (RNDIS). The Mac does not support this mode; use NCM.", "Aktif (RNDIS). Mode ini tidak didukung Mac; gunakan mode NCM.")
+            UsbTether.Mode.OFF -> tr("Off. Turn it on after connecting the USB cable to your Mac.", "Nonaktif. Aktifkan setelah kabel USB tersambung ke Mac.")
         }
         renderPaired()
     }
@@ -114,7 +114,7 @@ class SettingsActivity : Activity() {
 
     private fun renderPaired() {
         val names = prefs.pairedMacNames()
-        paired.text = if (names.isEmpty()) "Belum ada" else names.joinToString("\n")
+        paired.text = if (names.isEmpty()) tr("None yet", "Belum ada") else names.joinToString("\n")
     }
 
     /** Halaman Tethering USB (nama halamannya berbeda antar merek; cadangan: pengaturan jaringan). */

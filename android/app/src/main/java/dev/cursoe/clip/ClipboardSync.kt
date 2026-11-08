@@ -13,11 +13,12 @@ import android.os.Looper
 import android.util.Log
 import dev.cursoe.net.Session
 import dev.cursoe.net.Wire
-import org.json.JSONObject
+import dev.cursoe.tr
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.security.MessageDigest
 import kotlin.concurrent.thread
+import org.json.JSONObject
 
 /**
  * Sinkron clipboard HP ↔ Mac: teks dan gambar.
@@ -206,7 +207,7 @@ class ClipboardSync(
         file.writeBytes(bytes)
         val uri = ClipImageProvider.uriFor(file)
         main.post {
-            val clip = ClipData.newUri(context.contentResolver, "Gambar dari Mac", uri)
+            val clip = ClipData.newUri(context.contentResolver, tr("Image from Mac", "Gambar dari Mac"), uri)
             lastSeenImageClip = null
             clipboard.setPrimaryClip(clip)
             Log.i(TAG, "Clipboard Mac → HP: gambar ${bytes.size / 1024} KB")

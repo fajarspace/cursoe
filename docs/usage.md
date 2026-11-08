@@ -1,12 +1,12 @@
 # Usage
 
-The apps' interface is currently in Indonesian. Menu labels below are shown as they appear in the app, with an
-English description.
+The apps are available in English and Indonesian and follow your device's language. This guide uses the English
+labels.
 
 ## Moving the cursor
 
 - **Mac → Android:** push the cursor past the edge of the Mac screen on the side where the device sits. Set the side
-  in the Mac menu under **Posisi HP** (device position: right or left). You can also press **⌘⌥T**.
+  in the Mac menu under **Device Position** (right or left). You can also press **⌘⌥T**.
 - **Android → Mac:** push the cursor past the edge of the Android screen that faces the Mac, or press **⌘⌥T**.
 - **Safety:** the cursor always returns to the Mac when any of these happen:
   - you press ⌘⌥T, or Esc three times quickly;
@@ -56,17 +56,17 @@ English description.
 
 **Mac → Android**
 - Drag a file from Finder to the screen edge on the device's side. A blurred drop zone appears; drop the file there.
-- Alternatives: the **Kirim file…** (send file) menu item, or Finder › *Open With › Cursoe*.
+- Alternatives: the **Send File…** menu item, or Finder › *Open With › Cursoe*.
 - Files are saved to **Download/Cursoe** on Android (photos and videos also appear in the gallery). The cursor moves to
-  Android and a panel offers **Simpan** (save), apps that can open the file, or **Lainnya…** (more, the share sheet).
+  Android and a panel offers **Save**, apps that can open the file, or **More…** (the share sheet).
   **×** discards the file; tapping outside the panel or Back keeps it.
 
 **Android → Mac**
 - Long-press a photo in the gallery and drag it to the Android screen edge that faces the Mac until the blurred edge
   shows **Mac**, then release.
-- Files are saved to **~/Downloads** on the Mac, and a panel near the cursor offers **Simpan** (save), Mac apps that
-  can open the file, or **Finder**. **×** moves the file to the Trash; clicking outside, Esc or Return keeps it.
-- From any app: **Share › Kirim ke Mac** (send to Mac).
+- Files are saved to **~/Downloads** on the Mac, and a panel near the cursor offers **Save**, Mac apps that can
+  open the file, or **Finder**. **×** moves the file to the Trash; clicking outside, Esc or Return keeps it.
+- From any app: **Share › Send to Mac**.
 
 ## Settings
 
@@ -74,20 +74,20 @@ English description.
 
 | Item | What it does |
 |---|---|
-| Kendalikan HP (⌥⌘T) | Move the cursor to or from Android |
-| Kecepatan | Cursor speed on Android, 0.25×–3× |
-| Sinkron clipboard | Turn clipboard sync on or off |
-| Kirim file… | Choose a file to send to Android |
-| Posisi HP › Kanan / Kiri | Which side of the Mac the device is on |
-| Koneksi › | Connection: Otomatis (automatic) / Kabel USB (USB cable) / Wi-Fi / hotspot, reconnect, connect by IP, cable status |
-| Pengaturan › | Open at login, debug log, forget all pairings, version |
+| Control Android Device (⌥⌘T) | Move the cursor to or from Android |
+| Speed | Cursor speed on Android, 0.25×–3× |
+| Sync Clipboard | Turn clipboard sync on or off |
+| Send File… | Choose a file to send to Android |
+| Device Position › Right / Left | Which side of the Mac the device is on |
+| Connection › | Automatic / USB Cable / Wi-Fi / Hotspot, Reconnect, Connect by IP Address…, cable status |
+| Settings › | Open at Login, Debug Log, Forget All Pairings, version |
 
 **Android app**
 - The large power button turns Cursoe on or off. Turning it off only disconnects the Mac; the accessibility service
   stays enabled, so turning it back on is one tap.
 - A **Cursoe** tile for Quick Settings does the same from the notification shade.
 - Reminders appear when the accessibility service or Cursoe Keyboard is not enabled.
-- ☰ **Pengaturan** (settings): keep the screen on while connected, permission status, USB connection status,
+- ☰ **Settings**: keep the screen on while connected, permission status, USB connection status,
   paired Macs, debug log.
 
 All settings are saved.
@@ -99,6 +99,6 @@ Cursoe off does not disable its accessibility service, so for those apps:
 
 1. Open *Settings › Accessibility › Cursoe* and turn the service off.
 2. Use the banking app.
-3. Tap **Aktifkan** (enable) in the Cursoe app when you are done.
+3. Tap **Turn on** in the Cursoe app when you are done.
 
 Some banking apps also refuse to run while USB debugging is on. Use USB tethering or a wireless connection instead.

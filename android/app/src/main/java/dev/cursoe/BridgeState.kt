@@ -9,7 +9,7 @@ object BridgeState {
     data class Snapshot(
         val serviceRunning: Boolean = false,
         val connected: Boolean = false,
-        val status: String = "Layanan mati",
+        val status: String = tr("Service stopped", "Layanan mati"),
         val macName: String? = null,
         val pin: String? = null,
         val pinFor: String? = null,

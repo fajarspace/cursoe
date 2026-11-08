@@ -25,6 +25,7 @@ import android.view.animation.DecelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import android.widget.Toast
 import dev.cursoe.R
+import dev.cursoe.tr
 
 /**
  * Area lepas di tepi HP yang menghadap Mac. Hanya dipasang selama tombol kiri Mac ditahan
@@ -131,7 +132,7 @@ class DropStrip(
         val transfer = FileBridge.transfer
         if (uris.isEmpty() || transfer == null) {
             setOpen(false)
-            Toast.makeText(context, "Hanya file/foto yang bisa dikirim ke Mac", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, tr("Only files and photos can be sent to your Mac", "Hanya file/foto yang bisa dikirim ke Mac"), Toast.LENGTH_SHORT).show()
             return false
         }
         val mimeHint = clip?.description?.takeIf { it.mimeTypeCount > 0 }?.getMimeType(0)
@@ -242,7 +243,7 @@ class DropStrip(
             }
         }
 
-        /** ✓ "Terkirim" + kabut berkilau sekali. */
+        /** ✓ tr("Sent", "Terkirim") + kabut berkilau sekali. */
         fun playSent() {
             isSent = true
             sentAt = SystemClock.uptimeMillis()
@@ -302,8 +303,8 @@ class DropStrip(
             icon.draw(canvas)
             title.alpha = (255 * reveal).toInt()
             subtitle.alpha = (255 * reveal).toInt()
-            canvas.drawText(if (isSent) "Terkirim" else "Mac", cx, cy + 16 * d, title)
-            canvas.drawText(if (isSent) "ke Mac" else "Lepas untuk mengirim", cx, cy + 34 * d, subtitle)
+            canvas.drawText(if (isSent) tr("Sent", "Terkirim") else "Mac", cx, cy + 16 * d, title)
+            canvas.drawText(if (isSent) tr("to Mac", "ke Mac") else tr("Drop to send", "Lepas untuk mengirim"), cx, cy + 34 * d, subtitle)
         }
 
         private fun lerp(a: Float, b: Float, t: Float) = a + (b - a) * t

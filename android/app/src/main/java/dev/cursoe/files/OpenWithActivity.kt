@@ -29,9 +29,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
 import android.view.WindowManager
+import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.OvershootInterpolator
-import android.view.animation.AccelerateInterpolator
 import android.webkit.MimeTypeMap
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -41,6 +41,7 @@ import android.widget.TextView
 import android.widget.Toast
 import android.window.OnBackInvokedDispatcher
 import dev.cursoe.R
+import dev.cursoe.tr
 import kotlin.concurrent.thread
 
 /**
@@ -209,7 +210,7 @@ class OpenWithActivity : Activity() {
         val texts = LinearLayout(this@OpenWithActivity).apply { orientation = LinearLayout.VERTICAL }
         val subtitle = label("Download/Cursoe", 12.5f, R.color.gb_text_secondary)
         texts.addView(label(
-            if (uris.size == 1) names.firstOrNull() ?: "File dari Mac" else "${uris.size} file dari Mac",
+            if (uris.size == 1) names.firstOrNull() ?: tr("File from Mac", "File dari Mac") else tr("${uris.size} files from Mac", "${uris.size} file dari Mac"),
             16f, R.color.gb_text, bold = true,
         ).apply { maxLines = 1; ellipsize = TextUtils.TruncateAt.MIDDLE })
         texts.addView(subtitle.apply { setPadding(0, dp(2), 0, 0) })
@@ -240,7 +241,7 @@ class OpenWithActivity : Activity() {
                 GradientDrawable().apply { shape = GradientDrawable.OVAL; setColor(getColor(R.color.gb_glass_chip)) },
                 null,
             )
-            contentDescription = "Jangan simpan"
+            contentDescription = tr("Don't keep", "Jangan simpan")
             setOnClickListener { dismiss(saved = false) } // × = file dihapus
             addPressEffect(this)
         }, LinearLayout.LayoutParams(dp(38), dp(38)))
@@ -274,16 +275,16 @@ class OpenWithActivity : Activity() {
         return frame
     }
 
-    /** "Simpan" · aplikasi yang cocok · "Lainnya…". Kolom 4–6 sesuai lebar; maks ±3 baris lalu scroll. */
+    /** tr("Save", "Simpan") · aplikasi yang cocok · tr("More…", "Lainnya…"). Kolom 4–6 sesuai lebar; maks ±3 baris lalu scroll. */
     private fun buildGrid(contentWidth: Int): View {
         val columns = (contentWidth / dp(84)).coerceIn(4, 6)
         val items = mutableListOf<View>()
-        items += cell(circleIcon(R.drawable.ic_save, filled = true), "Simpan") { dismiss(saved = true) }
+        items += cell(circleIcon(R.drawable.ic_save, filled = true), tr("Save", "Simpan")) { dismiss(saved = true) }
         matchingApps().forEach { info ->
             val icon = ImageView(this).apply { setImageDrawable(info.loadIcon(packageManager)) }
             items += cell(icon, info.loadLabel(packageManager).toString()) { launch(info) }
         }
-        items += cell(circleIcon(R.drawable.ic_share, filled = false), "Lainnya…") {
+        items += cell(circleIcon(R.drawable.ic_share, filled = false), tr("More…", "Lainnya…")) {
             openShareSheet(this, uris, mime)
             finish()
         }
@@ -388,11 +389,11 @@ class OpenWithActivity : Activity() {
         if (closing) return
         closing = true
         if (saved) {
-            Toast.makeText(this, "Tersimpan di Download/Cursoe", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, tr("Saved to Download/Cursoe", "Tersimpan di Download/Cursoe"), Toast.LENGTH_SHORT).show()
         } else {
             val deleted = uris.count { uri -> runCatching { contentResolver.delete(uri, null, null) > 0 }.getOrDefault(false) }
             Log.i(TAG, "File dari Mac tidak disimpan: $deleted/${uris.size} dihapus")
-            Toast.makeText(this, "File tidak disimpan", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, tr("File not kept", "File tidak disimpan"), Toast.LENGTH_SHORT).show()
         }
         scrim.animate().alpha(0f).setDuration(180).start()
         animateBlur(0, 180)
@@ -450,7 +451,7 @@ class OpenWithActivity : Activity() {
             startActivity(intent)
         } catch (e: RuntimeException) {
             Log.w(TAG, "Tidak bisa membuka ${info.activityInfo.packageName}: ${e.message}")
-            Toast.makeText(this, "Aplikasi tidak bisa membuka file ini", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, tr("The app can't open this file", "Aplikasi tidak bisa membuka file ini"), Toast.LENGTH_SHORT).show()
         }
         finish()
     }
@@ -491,7 +492,7 @@ class OpenWithActivity : Activity() {
             send.type = mime
             send.clipData = clipOf(context, uris)
             send.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            val chooser = Intent.createChooser(send, "Kirim file dari Mac ke…")
+            val chooser = Intent.createChooser(send, tr("Send the file from Mac to…", "Kirim file dari Mac ke…"))
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION)
             try {
                 context.startActivity(chooser)

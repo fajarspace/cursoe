@@ -136,13 +136,13 @@ final class FileTransfer: FileTransferHandler {
         item.hasher.update(data: data)
         item.sent += data.count
         outgoing = item
-        publishProgress("Mengirim \(item.name)", done: item.sent, total: item.size)
+        publishProgress(L("Sending \(item.name)", "Mengirim \(item.name)"), done: item.sent, total: item.size)
 
         var frame = Data([Self.binaryMarker])
         withUnsafeBytes(of: item.id.uuid) { frame.append(contentsOf: $0) }
         frame.append(data)
         let sent = client.sendBinaryOnQueue(frame) { [weak self] in self?.pump() }
-        if !sent { abortOutgoing("koneksi putus") }
+        if !sent { abortOutgoing(L("connection lost", "koneksi putus")) }
     }
 
     private func finishOutgoing() {
@@ -171,7 +171,7 @@ final class FileTransfer: FileTransferHandler {
             guard FileManager.default.createFile(atPath: temp.path, contents: nil),
                   let handle = try? FileHandle(forWritingTo: temp) else {
                 Log.info("Tidak bisa menulis ke Downloads")
-                client.sendOnQueue(["t": "FILE_RESULT", "id": idText, "ok": false, "message": "Mac tidak bisa menulis ke Downloads"])
+                client.sendOnQueue(["t": "FILE_RESULT", "id": idText, "ok": false, "message": L("the Mac cannot write to Downloads", "Mac tidak bisa menulis ke Downloads")])
                 return
             }
             let isLast = (m.int("index") ?? 1) >= (m.int("count") ?? 1)
@@ -184,13 +184,13 @@ final class FileTransfer: FileTransferHandler {
             let digest = item.hasher.finalize().map { String(format: "%02x", $0) }.joined()
             guard item.received == item.size, digest == m.string("sha256") else {
                 try? FileManager.default.removeItem(at: item.tempURL)
-                client.sendOnQueue(["t": "FILE_RESULT", "id": idText, "ok": false, "message": "file rusak/tidak lengkap"])
+                client.sendOnQueue(["t": "FILE_RESULT", "id": idText, "ok": false, "message": L("the file is corrupted or incomplete", "file rusak/tidak lengkap")])
                 return
             }
             let final = Self.uniqueURL(in: Self.downloads, name: item.name)
             do {
                 try FileManager.default.moveItem(at: item.tempURL, to: final)
-                client.sendOnQueue(["t": "FILE_RESULT", "id": idText, "ok": true, "message": "Tersimpan di Downloads Mac"])
+                client.sendOnQueue(["t": "FILE_RESULT", "id": idText, "ok": true, "message": L("Saved to Downloads on the Mac", "Tersimpan di Downloads Mac")])
                 Log.info("File dari HP tersimpan: \(final.path)")
                 publish(nil)
                 DispatchQueue.main.async { self.onReceived?(final, item.isLast) }
@@ -222,7 +222,7 @@ final class FileTransfer: FileTransferHandler {
             try? item.handle.close()
             try? FileManager.default.removeItem(at: item.tempURL)
             incoming[id] = nil
-            client.sendOnQueue(["t": "FILE_RESULT", "id": id.uuidString, "ok": false, "message": "disk Mac penuh/tidak bisa ditulis"])
+            client.sendOnQueue(["t": "FILE_RESULT", "id": id.uuidString, "ok": false, "message": L("the Mac disk is full or read-only", "disk Mac penuh/tidak bisa ditulis")])
             return
         }
         item.hasher.update(data: data)
@@ -232,11 +232,11 @@ final class FileTransfer: FileTransferHandler {
             handleFileMessage("FILE_CANCEL", ["id": id.uuidString])
             return
         }
-        publishProgress("Menerima \(item.name)", done: item.received, total: item.size)
+        publishProgress(L("Receiving \(item.name)", "Menerima \(item.name)"), done: item.received, total: item.size)
     }
 
     func connectionLost() {
-        abortOutgoing("koneksi putus")
+        abortOutgoing(L("connection lost", "koneksi putus"))
         for (_, item) in incoming {
             try? item.handle.close()
             try? FileManager.default.removeItem(at: item.tempURL)
@@ -251,7 +251,7 @@ final class FileTransfer: FileTransferHandler {
         guard now - lastStatusAt > 0.25 || done >= total else { return }
         lastStatusAt = now
         let percent = total > 0 ? done * 100 / total : 100
-        let batch = batchTotal > 1 && label.hasPrefix("Mengirim") ? " (\(batchIndex)/\(batchTotal))" : ""
+        let batch = batchTotal > 1 && label.hasPrefix(L("Sending", "Mengirim")) ? " (\(batchIndex)/\(batchTotal))" : ""
         publish("\(label)\(batch) — \(percent)%")
     }
 

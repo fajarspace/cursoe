@@ -3,7 +3,7 @@ import ServiceManagement
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem!
-    private let statusLine = NSMenuItem(title: "Mencari HP…", action: nil, keyEquivalent: "")
+    private let statusLine = NSMenuItem(title: L("Searching for your device…", "Mencari HP…"), action: nil, keyEquivalent: "")
     /// Hanya tampil bila ada yang perlu dibereskan (izin/keyboard di HP, alasan tidak bisa remote).
     private let alertLine = NSMenuItem(title: "", action: nil, keyEquivalent: "")
     private var toggleItem: NSMenuItem!
@@ -48,7 +48,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         let workspace = NSWorkspace.shared.notificationCenter
         workspace.addObserver(forName: NSWorkspace.didWakeNotification, object: nil, queue: .main) { [weak self] _ in
-            self?.client.reconnect(reason: "Mac bangun dari sleep")
+            self?.client.reconnect(reason: L("Mac woke from sleep", "Mac bangun dari sleep"))
         }
         // Pengaman: kursor selalu kembali ke Mac saat Mac tidur, layar mati, atau sesi dikunci/berganti.
         for name in [NSWorkspace.willSleepNotification, NSWorkspace.screensDidSleepNotification,
@@ -60,7 +60,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         DistributedNotificationCenter.default().addObserver(
             forName: NSNotification.Name("com.apple.screenIsLocked"), object: nil, queue: .main
         ) { [weak self] _ in
-            self?.remote.exitRemote(reason: "layar Mac dikunci")
+            self?.remote.exitRemote(reason: L("Mac screen locked", "layar Mac dikunci"))
         }
 
         Notifier.shared.setup()
@@ -102,7 +102,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationWillTerminate(_ notification: Notification) {
-        remote.exitRemote(reason: "aplikasi ditutup")
+        remote.exitRemote(reason: L("app quit", "aplikasi ditutup"))
     }
 
     // MARK: Izin Accessibility & event tap
@@ -137,7 +137,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func handleRemote(_ type: String, _ message: Message) {
         switch type {
         case "LEAVE":
-            remote.exitRemote(reason: "kursor keluar lewat tepi HP", notifyFold: false,
+            remote.exitRemote(reason: L("cursor left through the device edge", "kursor keluar lewat tepi HP"), notifyFold: false,
                               leaveYRatio: message.double("yRatio") ?? 0.5)
 
         case "CLIPBOARD", "CLIP_IMAGE_BEGIN", "CLIP_IMAGE_DATA", "CLIP_IMAGE_END":
@@ -164,19 +164,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         alertLine.isHidden = true
         transferLine.isHidden = true
-        permissionItem = item("⚠︎ Beri izin Aksesibilitas…", #selector(openAccessibilitySettings))
+        permissionItem = item(L("⚠︎ Grant Accessibility Access…", "⚠︎ Beri izin Aksesibilitas…"), #selector(openAccessibilitySettings))
         menu.addItem(permissionItem)
 
         menu.addItem(.separator())
-        toggleItem = item("Kendalikan HP", #selector(toggleRemote), key: "t")
+        toggleItem = item(L("Control Android Device", "Kendalikan HP"), #selector(toggleRemote), key: "t")
         toggleItem.keyEquivalentModifierMask = [.command, .option] // hanya tampilan; ditangani event tap
         menu.addItem(toggleItem)
         menu.addItem(sensitivityItem())
 
         menu.addItem(.separator())
-        clipboardItem = item("Sinkron clipboard", #selector(toggleClipboard))
+        clipboardItem = item(L("Sync Clipboard", "Sinkron clipboard"), #selector(toggleClipboard))
         menu.addItem(clipboardItem)
-        sendFilesItem = item("Kirim file…", #selector(chooseFilesToSend))
+        sendFilesItem = item(L("Send File…", "Kirim file…"), #selector(chooseFilesToSend))
         menu.addItem(sendFilesItem)
 
         menu.addItem(.separator())
@@ -185,7 +185,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(settingsMenuItem())
 
         menu.addItem(.separator())
-        menu.addItem(item("Keluar", #selector(quit), key: "q"))
+        menu.addItem(item(L("Quit", "Keluar"), #selector(quit), key: "q"))
         statusItem.menu = menu
     }
 
@@ -201,7 +201,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let container = NSView(frame: NSRect(x: 0, y: 0, width: width, height: 26))
         container.autoresizingMask = [.width]
 
-        let label = NSTextField(labelWithString: "Kecepatan")
+        let label = NSTextField(labelWithString: L("Speed", "Kecepatan"))
         label.font = .menuFont(ofSize: 0)
         label.frame = NSRect(x: 28, y: 4, width: 70, height: 18)
 
@@ -249,12 +249,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         var dot: NSColor = .tertiaryLabelColor
         switch snapshot.state {
         case .searching:
-            status = "Mencari HP…"
+            status = L("Searching for your device…", "Mencari HP…")
         case .connecting(let name):
-            status = "Menghubungkan ke \(name)…"
+            status = L("Connecting to \(name)…", "Menghubungkan ke \(name)…")
             dot = .systemOrange
         case .awaitingPin(let name):
-            status = "Menunggu PIN · \(name)"
+            status = L("Waiting for PIN · \(name)", "Menunggu PIN · \(name)")
             dot = .systemOrange
         case .connected(let name):
             connected = true
@@ -271,11 +271,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         var alert: String?
         if connected, !(snapshot.screen?.cursorReady ?? false) {
-            alert = "Aktifkan Aksesibilitas Cursoe di HP"
+            alert = L("Turn on Cursoe Accessibility on your device", "Aktifkan Aksesibilitas Cursoe di HP")
         } else if connected, tapReady, !remote.isRemote, let refusal = remote.lastRefusal {
             alert = refusal.prefix(1).uppercased() + refusal.dropFirst()
         } else if connected, let screen = snapshot.screen, !screen.keyboardReady {
-            alert = "Aktifkan Cursoe Keyboard di HP"
+            alert = L("Turn on Cursoe Keyboard on your device", "Aktifkan Cursoe Keyboard di HP")
         }
         alertLine.attributedTitle = infoTitle(alert ?? "", mark: "⚠︎", color: .systemOrange)
         alertLine.isHidden = alert == nil
@@ -286,20 +286,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         modeAutoItem.state = mode == .auto ? .on : .off
         modeUsbItem.state = mode == .usb ? .on : .off
         modeWirelessItem.state = mode == .wireless ? .on : .off
-        usbLine.title = "Kabel USB: \(snapshot.usbStatus)"
+        usbLine.title = L("USB cable: \(snapshot.usbStatus)", "Kabel USB: \(snapshot.usbStatus)")
         debugLogItem.state = Log.verbose ? .on : .off
 
         sendFilesItem.isEnabled = connected
         if case .connected(let name) = snapshot.state { remote.dropZone.deviceName = name }
         sideRightItem.state = remote.side == .right ? .on : .off
         sideLeftItem.state = remote.side == .left ? .on : .off
-        sideItem.title = "Posisi HP: " + (remote.side == .right ? "kanan" : "kiri")
+        sideItem.title = L("Device position: ", "Posisi HP: ") + (remote.side == .right ? L("right", "kanan") : L("left", "kiri"))
 
         if remote.isRemote {
-            toggleItem.title = "Kembali ke Mac"
+            toggleItem.title = L("Return to Mac", "Kembali ke Mac")
             toggleItem.isEnabled = true
         } else {
-            toggleItem.title = "Kendalikan HP"
+            toggleItem.title = L("Control Android Device", "Kendalikan HP")
             toggleItem.isEnabled = connected && tapReady
         }
 
@@ -323,11 +323,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func sideMenuItem() -> NSMenuItem {
         let submenu = NSMenu()
         submenu.autoenablesItems = false
-        sideRightItem = item("Kanan", #selector(chooseSideRight))
-        sideLeftItem = item("Kiri", #selector(chooseSideLeft))
+        sideRightItem = item(L("Right", "Kanan"), #selector(chooseSideRight))
+        sideLeftItem = item(L("Left", "Kiri"), #selector(chooseSideLeft))
         submenu.addItem(sideRightItem)
         submenu.addItem(sideLeftItem)
-        sideItem = NSMenuItem(title: "Posisi HP", action: nil, keyEquivalent: "")
+        sideItem = NSMenuItem(title: L("Device Position", "Posisi HP"), action: nil, keyEquivalent: "")
         sideItem.submenu = submenu
         return sideItem
     }
@@ -335,19 +335,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func connectionMenuItem() -> NSMenuItem {
         let submenu = NSMenu()
         submenu.autoenablesItems = false
-        modeAutoItem = item("Otomatis", #selector(chooseModeAuto))
-        modeUsbItem = item("Kabel USB", #selector(chooseModeUsb))
-        modeWirelessItem = item("Wi-Fi / hotspot", #selector(chooseModeWireless))
+        modeAutoItem = item(L("Automatic", "Otomatis"), #selector(chooseModeAuto))
+        modeUsbItem = item(L("USB Cable", "Kabel USB"), #selector(chooseModeUsb))
+        modeWirelessItem = item(L("Wi-Fi / Hotspot", "Wi-Fi / hotspot"), #selector(chooseModeWireless))
         submenu.addItem(modeAutoItem)
         submenu.addItem(modeUsbItem)
         submenu.addItem(modeWirelessItem)
         submenu.addItem(.separator())
-        submenu.addItem(item("Hubungkan ulang", #selector(reconnect)))
-        submenu.addItem(item("Hubungkan lewat IP…", #selector(manualConnect)))
+        submenu.addItem(item(L("Reconnect", "Hubungkan ulang"), #selector(reconnect)))
+        submenu.addItem(item(L("Connect by IP Address…", "Hubungkan lewat IP…"), #selector(manualConnect)))
         submenu.addItem(.separator())
         usbLine.isEnabled = false
         submenu.addItem(usbLine)
-        let parent = NSMenuItem(title: "Koneksi", action: nil, keyEquivalent: "")
+        let parent = NSMenuItem(title: L("Connection", "Koneksi"), action: nil, keyEquivalent: "")
         parent.submenu = submenu
         return parent
     }
@@ -355,19 +355,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func settingsMenuItem() -> NSMenuItem {
         let submenu = NSMenu()
         submenu.autoenablesItems = false
-        loginItem = item("Buka saat login", #selector(toggleLaunchAtLogin))
+        loginItem = item(L("Open at Login", "Buka saat login"), #selector(toggleLaunchAtLogin))
         submenu.addItem(loginItem)
         submenu.addItem(.separator())
-        debugLogItem = item("Log debug", #selector(toggleDebugLog))
+        debugLogItem = item(L("Debug Log", "Log debug"), #selector(toggleDebugLog))
         submenu.addItem(debugLogItem)
-        submenu.addItem(item("Buka file log", #selector(openLogFile)))
+        submenu.addItem(item(L("Open Log File", "Buka file log"), #selector(openLogFile)))
         submenu.addItem(.separator())
-        submenu.addItem(item("Lupakan semua pairing", #selector(forgetPairings)))
+        submenu.addItem(item(L("Forget All Pairings", "Lupakan semua pairing"), #selector(forgetPairings)))
         submenu.addItem(.separator())
         let version = NSMenuItem(title: "Cursoe \(appVersion)", action: nil, keyEquivalent: "")
         version.isEnabled = false
         submenu.addItem(version)
-        let parent = NSMenuItem(title: "Pengaturan", action: nil, keyEquivalent: "")
+        let parent = NSMenuItem(title: L("Settings", "Pengaturan"), action: nil, keyEquivalent: "")
         parent.submenu = submenu
         return parent
     }
@@ -412,7 +412,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @objc private func chooseFilesToSend() {
         NSApp.activate()
         let panel = NSOpenPanel()
-        panel.title = "Kirim file ke HP"
+        panel.title = L("Send Files to Your Device", "Kirim file ke HP")
         panel.allowsMultipleSelection = true
         panel.canChooseDirectories = false
         if panel.runModal() == .OK { sendToPhone(panel.urls) }
@@ -446,23 +446,25 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc private func reconnect() {
-        client.reconnect(reason: "diminta pengguna")
+        client.reconnect(reason: L("requested by user", "diminta pengguna"))
     }
 
     @objc private func manualConnect() {
         NSApp.activate()
         let alert = NSAlert()
-        alert.messageText = "Hubungkan lewat alamat IP"
-        alert.informativeText = """
-            Cadangan bila HP tidak ditemukan otomatis (mis. Wi-Fi kampus/kantor yang memblokir Bonjour). \
-            Alamat & port tampil di aplikasi Cursoe di HP. Kosongkan untuk mematikan.
-            """
+        alert.messageText = L("Connect by IP Address", "Hubungkan lewat alamat IP")
+        alert.informativeText = L(
+            "A fallback when your device is not found automatically (for example on office or campus Wi-Fi that " +
+                "blocks Bonjour). The address and port are shown in the Cursoe app on your device. Leave empty to turn it off.",
+            "Cadangan bila HP tidak ditemukan otomatis (mis. Wi-Fi kampus/kantor yang memblokir Bonjour). " +
+                "Alamat & port tampil di aplikasi Cursoe di HP. Kosongkan untuk mematikan."
+        )
         let field = NSTextField(frame: NSRect(x: 0, y: 0, width: 260, height: 24))
         field.placeholderString = "192.168.1.20:\(BridgeClient.defaultPort)"
         field.stringValue = client.manualHost ?? ""
         alert.accessoryView = field
-        alert.addButton(withTitle: "Simpan & hubungkan")
-        alert.addButton(withTitle: "Batal")
+        alert.addButton(withTitle: L("Save & Connect", "Simpan & hubungkan"))
+        alert.addButton(withTitle: L("Cancel", "Batal"))
         alert.window.initialFirstResponder = field
         if alert.runModal() == .alertFirstButtonReturn {
             client.setManualHost(field.stringValue)

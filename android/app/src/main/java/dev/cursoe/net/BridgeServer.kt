@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.nsd.NsdManager
 import android.net.nsd.NsdServiceInfo
 import android.util.Log
+import dev.cursoe.tr
 import java.io.IOException
 import java.net.DatagramPacket
 import java.net.DatagramSocket
@@ -62,7 +63,7 @@ class BridgeServer(
             serverSocket = null
             probeSocket?.close()
             probeSocket = null
-            current?.close("layanan dimatikan")
+            current?.close(tr("service stopped", "layanan dimatikan"))
             current = null
         }
     }
@@ -92,7 +93,7 @@ class BridgeServer(
             val session = Session(socket, host)
             val previous = current
             current = session
-            previous?.close("digantikan koneksi baru")
+            previous?.close(tr("replaced by a new connection", "digantikan koneksi baru"))
             session.start()
         }
     }

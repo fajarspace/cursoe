@@ -40,6 +40,8 @@ mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp "$BIN_DIR/$APP_NAME" "$APP/Contents/MacOS/$APP_NAME"
 [ -f Resources/AppIcon.icns ] || swift make-icon.swift
 cp Resources/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
+# Bahasa: English bawaan, Bahasa Indonesia (teks Info.plist yang diterjemahkan, mis. pesan izin Local Network).
+cp -R Resources/en.lproj Resources/id.lproj "$APP/Contents/Resources/"
 
 cat > "$APP/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
@@ -69,7 +71,14 @@ cat > "$APP/Contents/Info.plist" <<PLIST
     <key>NSHighResolutionCapable</key>
     <true/>
     <key>NSLocalNetworkUsageDescription</key>
-    <string>Cursoe mencari dan terhubung ke HP Anda di jaringan lokal.</string>
+    <string>Cursoe finds and connects to your Android device on the local network.</string>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>en</string>
+    <key>CFBundleLocalizations</key>
+    <array>
+        <string>en</string>
+        <string>id</string>
+    </array>
     <key>NSBonjourServices</key>
     <array>
         <string>_cursoe._tcp</string>

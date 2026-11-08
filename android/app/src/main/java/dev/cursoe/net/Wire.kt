@@ -1,5 +1,6 @@
 package dev.cursoe.net
 
+import dev.cursoe.tr
 import java.io.DataInputStream
 import java.io.DataOutputStream
 import java.io.IOException
@@ -17,7 +18,7 @@ object Wire {
 
     fun readFrame(input: DataInputStream): ByteArray {
         val length = input.readInt()
-        if (length <= 0 || length > MAX_FRAME) throw IOException("ukuran frame tidak valid ($length)")
+        if (length <= 0 || length > MAX_FRAME) throw IOException(tr("invalid frame size ($length)", "ukuran frame tidak valid ($length)"))
         val buffer = ByteArray(length)
         input.readFully(buffer)
         return buffer

@@ -24,6 +24,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
+import dev.cursoe.tr
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -135,7 +136,7 @@ class ScreenSnip(private val service: AccessibilityService, private val onFinish
             }
             main.post {
                 if (uri == null) {
-                    toast("Screenshot gagal disimpan")
+                    toast(tr("Couldn't save the screenshot", "Screenshot gagal disimpan"))
                     return@post
                 }
                 // Clipboard HP → ikut dikirim ke Mac oleh sinkron clipboard.
@@ -143,7 +144,7 @@ class ScreenSnip(private val service: AccessibilityService, private val onFinish
                     service.getSystemService(ClipboardManager::class.java)
                         .setPrimaryClip(ClipData.newUri(service.contentResolver, "Screenshot", uri))
                 }
-                toast(if (copy) "Screenshot disimpan & disalin" else "Screenshot disimpan")
+                toast(if (copy) tr("Screenshot saved and copied", "Screenshot disimpan & disalin") else tr("Screenshot saved", "Screenshot disimpan"))
                 Log.i(TAG, "Screenshot area ${rect.width()}×${rect.height()} disimpan: $uri")
             }
         }
@@ -168,7 +169,7 @@ class ScreenSnip(private val service: AccessibilityService, private val onFinish
 
     private fun fail(reason: String) {
         Log.w(TAG, "Screenshot tidak bisa diambil: $reason")
-        toast("Screenshot tidak bisa diambil di layar ini")
+        toast(tr("Screenshots aren't available on this screen", "Screenshot tidak bisa diambil di layar ini"))
         dismiss()
         onFinished()
     }
@@ -248,7 +249,7 @@ class ScreenSnip(private val service: AccessibilityService, private val onFinish
             val sel = selection()
             if (sel == null) {
                 canvas.drawRect(0f, 0f, width.toFloat(), height.toFloat(), scrim)
-                drawPill(canvas, "Seret untuk memilih area · Enter = layar penuh · Esc = batal", width / 2f, 64f * density)
+                drawPill(canvas, tr("Drag to select an area · Enter = full screen · Esc = cancel", "Seret untuk memilih area · Enter = layar penuh · Esc = batal"), width / 2f, 64f * density)
             } else {
                 // Redupkan semua kecuali area terpilih.
                 canvas.drawRect(0f, 0f, width.toFloat(), sel.top.toFloat(), scrim)

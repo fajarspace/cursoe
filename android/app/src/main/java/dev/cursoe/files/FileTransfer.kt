@@ -15,7 +15,7 @@ import android.provider.OpenableColumns
 import android.util.Log
 import dev.cursoe.R
 import dev.cursoe.net.Session
-import org.json.JSONObject
+import dev.cursoe.tr
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
@@ -25,6 +25,7 @@ import java.security.MessageDigest
 import java.util.UUID
 import java.util.concurrent.LinkedBlockingQueue
 import kotlin.concurrent.thread
+import org.json.JSONObject
 
 /** Akses global (satu proses) ke transfer file yang dimiliki BridgeService. */
 object FileBridge {
@@ -79,7 +80,7 @@ class FileTransfer(
 
     init {
         notifications.createNotificationChannel(
-            NotificationChannel(CHANNEL, "Transfer file", NotificationManager.IMPORTANCE_DEFAULT)
+            NotificationChannel(CHANNEL, tr("File transfer", "Transfer file"), NotificationManager.IMPORTANCE_DEFAULT)
         )
         worker = thread(name = "gb-files", isDaemon = true) { workerLoop() }
     }
@@ -104,7 +105,7 @@ class FileTransfer(
                 return
             }
             var ok = true
-            var message = "${batch.uris.size} file terkirim ke Mac"
+            var message = tr("${batch.uris.size} files sent to Mac", "${batch.uris.size} file terkirim ke Mac")
             batch.uris.forEachIndexed { index, uri ->
                 val result = sendOne(uri, batch.mimeHint, index + 1, batch.uris.size, batch.onProgress)
                 if (result != null) {
@@ -113,18 +114,18 @@ class FileTransfer(
                 }
             }
             batch.onDone?.invoke(ok, message)
-            notifyDone(if (ok) "Terkirim ke Mac" else "Gagal mengirim ke Mac", message, null, null)
+            notifyDone(if (ok) tr("Sent to Mac", "Terkirim ke Mac") else tr("Couldn't send to Mac", "Gagal mengirim ke Mac"), message, null, null)
         }
     }
 
     /** @return null bila berhasil, atau pesan kesalahan. */
     private fun sendOne(uri: Uri, mimeHint: String?, index: Int, count: Int, onProgress: ((String) -> Unit)?): String? {
-        val s = session()?.takeIf { it.authenticated } ?: return "Mac tidak terhubung"
+        val s = session()?.takeIf { it.authenticated } ?: return tr("Mac not connected", "Mac tidak terhubung")
         var temp: File? = null
         try {
             var (name, size) = queryNameAndSize(uri)
             val mime = resolver.getType(uri) ?: mimeHint?.takeIf { !it.contains('*') } ?: "application/octet-stream"
-            var input: InputStream = resolver.openInputStream(uri) ?: return "Tidak bisa membuka $name"
+            var input: InputStream = resolver.openInputStream(uri) ?: return tr("Can't open $name", "Tidak bisa membuka $name")
             if (size < 0) { // ukuran tak diketahui: salin ke cache dulu
                 temp = File.createTempFile("send", null, context.cacheDir)
                 input.use { src -> FileOutputStream(temp).use { src.copyTo(it) } }
@@ -148,7 +149,7 @@ class FileTransfer(
                     val n = src.read(buffer)
                     if (n < 0) break
                     if (n == 0) continue
-                    if (!s.authenticated || s !== session()) return "Koneksi ke Mac terputus"
+                    if (!s.authenticated || s !== session()) return tr("Connection to Mac lost", "Koneksi ke Mac terputus")
                     // Tahan laju: tunggu antrean kirim hampir kosong agar PONG/LEAVE tidak tertahan.
                     while (s.pendingOutgoing > 2 && s.authenticated) Thread.sleep(1)
                     digest.update(buffer, 0, n)
@@ -157,23 +158,27 @@ class FileTransfer(
                     val now = System.currentTimeMillis()
                     if (now - lastProgress > 300) {
                         lastProgress = now
-                        val label = "Mengirim $name ($index/$count) — ${if (size > 0) sent * 100 / size else 100}%"
+                        val label = tr("Sending $name ($index/$count) — ${if (size > 0) sent * 100 / size else 100}%", "Mengirim $name ($index/$count) — ${if (size > 0) sent * 100 / size else 100}%")
                         onProgress?.invoke(label)
-                        notifyProgress(NOTIF_SEND, "Mengirim ke Mac", label, sent, size)
+                        notifyProgress(NOTIF_SEND, tr("Sending to Mac", "Mengirim ke Mac"), label, sent, size)
                     }
                 }
             }
-            if (sent != size) return "Ukuran $name berubah saat dikirim"
+            if (sent != size) return tr("$name changed size while sending", "Ukuran $name berubah saat dikirim")
             s.sendIfReady(JSONObject().put("t", "FILE_END").put("id", id.toString()).put("sha256", hex(digest.digest())))
             Log.i(TAG, "Terkirim ke Mac: $name (${size / 1024} KB)")
             return null
         } catch (e: SecurityException) {
             Log.w(TAG, "Tidak diizinkan membaca $uri: ${e.message}")
-            return "Aplikasi sumber tidak mengizinkan file ini dibaca. Izinkan akses Foto & video untuk " +
-                "Cursoe, atau gunakan Bagikan › Kirim ke Mac."
+            return tr(
+                "The source app doesn't allow this file to be read. Allow Cursoe to access photos and videos, " +
+                    "or use Share › Send to Mac.",
+                "Aplikasi sumber tidak mengizinkan file ini dibaca. Izinkan akses Foto & video untuk " +
+                    "Cursoe, atau gunakan Bagikan › Kirim ke Mac.",
+            )
         } catch (e: Exception) {
             Log.w(TAG, "Gagal mengirim $uri", e)
-            return "Gagal mengirim: ${e.message}"
+            return tr("Send failed: ${e.message}", "Gagal mengirim: ${e.message}")
         } finally {
             temp?.delete()
         }
@@ -203,7 +208,7 @@ class FileTransfer(
             "FILE_RESULT" -> {
                 val ok = m.optBoolean("ok")
                 Log.i(TAG, "Mac: ${if (ok) "file diterima" else "gagal"} — ${m.optString("message")}")
-                if (!ok) notifyDone("Mac gagal menyimpan file", m.optString("message"), null, null)
+                if (!ok) notifyDone(tr("The Mac couldn't save the file", "Mac gagal menyimpan file"), m.optString("message"), null, null)
             }
         }
     }
@@ -216,7 +221,7 @@ class FileTransfer(
         try {
             item.out.write(frame, 17, frame.size - 17)
         } catch (e: Exception) {
-            reply(id, false, "HP tidak bisa menulis file: ${e.message}")
+            reply(id, false, tr("This device couldn't write the file: ${e.message}", "HP tidak bisa menulis file: ${e.message}"))
             cancel(id)
             return
         }
@@ -229,7 +234,7 @@ class FileTransfer(
         val now = System.currentTimeMillis()
         if (now - item.lastNotified > 400) {
             item.lastNotified = now
-            notifyProgress(NOTIF_RECEIVE, "Menerima dari Mac", item.name, item.received, item.size)
+            notifyProgress(NOTIF_RECEIVE, tr("Receiving from Mac", "Menerima dari Mac"), item.name, item.received, item.size)
         }
     }
 
@@ -263,7 +268,7 @@ class FileTransfer(
             Log.i(TAG, "Menerima $name (${size / 1024} KB) dari Mac")
         } catch (e: Exception) {
             Log.w(TAG, "Tidak bisa menyiapkan file $name", e)
-            reply(id, false, "HP tidak bisa menyimpan file: ${e.message}")
+            reply(id, false, tr("This device couldn't save the file: ${e.message}", "HP tidak bisa menyimpan file: ${e.message}"))
         }
     }
 
@@ -274,14 +279,14 @@ class FileTransfer(
         val sha = hex(item.digest.digest())
         if (item.received != item.size || sha != m.optString("sha256")) {
             discard(item)
-            reply(id, false, "file rusak/tidak lengkap")
-            notifyDone("Gagal menerima ${item.name}", "File rusak atau tidak lengkap", null, null)
+            reply(id, false, tr("file corrupted or incomplete", "file rusak/tidak lengkap"))
+            notifyDone(tr("Couldn't receive ${item.name}", "Gagal menerima ${item.name}"), tr("The file is corrupted or incomplete", "File rusak atau tidak lengkap"), null, null)
             return
         }
         item.uri?.let { uri ->
             resolver.update(uri, ContentValues().apply { put(MediaStore.Downloads.IS_PENDING, 0) }, null, null)
         }
-        reply(id, true, "Tersimpan di Download/$FOLDER")
+        reply(id, true, tr("Saved to Download/$FOLDER", "Tersimpan di Download/$FOLDER"))
         Log.i(TAG, "File dari Mac tersimpan: ${item.name}")
         val batch = item.shareBatch
         if (batch != null && item.uri != null) {
@@ -298,7 +303,7 @@ class FileTransfer(
             }
             notifications.cancel(NOTIF_RECEIVE)
         } else {
-            notifyDone("File dari Mac", "${item.name} — Download/$FOLDER", item.uri, item.mime)
+            notifyDone(tr("File from Mac", "File dari Mac"), "${item.name} — Download/$FOLDER", item.uri, item.mime)
         }
     }
 

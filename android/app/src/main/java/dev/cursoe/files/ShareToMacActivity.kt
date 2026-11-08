@@ -10,6 +10,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import dev.cursoe.BridgeState
+import dev.cursoe.tr
 
 /**
  * Tujuan "Bagikan" → "Kirim ke Mac". Selalu berhasil membaca file karena sistem memberi izin
@@ -22,19 +23,19 @@ class ShareToMacActivity : Activity() {
         super.onCreate(savedInstanceState)
         val transfer = FileBridge.transfer
         if (transfer == null || !BridgeState.current.connected) {
-            Toast.makeText(this, "Mac belum terhubung ke Cursoe", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, tr("Your Mac isn't connected to Cursoe", "Mac belum terhubung ke Cursoe"), Toast.LENGTH_LONG).show()
             finish()
             return
         }
         val uris = streamUris(intent)
         if (uris.isEmpty()) {
-            Toast.makeText(this, "Tidak ada file untuk dikirim", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, tr("No files to send", "Tidak ada file untuk dikirim"), Toast.LENGTH_SHORT).show()
             finish()
             return
         }
 
         val density = resources.displayMetrics.density
-        val label = TextView(this).apply { text = "Mengirim ${uris.size} file ke Mac…" }
+        val label = TextView(this).apply { text = tr("Sending ${uris.size} files to Mac…", "Mengirim ${uris.size} file ke Mac…") }
         val progress = ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal).apply { isIndeterminate = true }
         setContentView(LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL

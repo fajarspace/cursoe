@@ -17,6 +17,7 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import dev.cursoe.cursor.InputRouter
+import dev.cursoe.tr
 
 /**
  * "Cursoe Keyboard": IME minimal yang menerima teks & tombol dari keyboard Mac
@@ -49,12 +50,12 @@ class CursoeKeyboardService : InputMethodService() {
             minimumHeight = (44 * density).toInt()
         }
         val label = TextView(this).apply {
-            text = "⌨︎  Mengetik dari keyboard Mac — Cursoe"
+            text = tr("⌨︎  Typing from your Mac keyboard — Cursoe", "⌨︎  Mengetik dari keyboard Mac — Cursoe")
             setTextColor(0xFFE8EAED.toInt())
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
         }
         val switchButton = Button(this, null, android.R.attr.borderlessButtonStyle).apply {
-            text = "Ganti keyboard"
+            text = tr("Switch keyboard", "Ganti keyboard")
             setTextColor(0xFF8AB4F8.toInt())
             setOnClickListener { switchAway() }
         }

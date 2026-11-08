@@ -227,21 +227,21 @@ private final class ReceivedView: NSView {
 
         var items: [GridCell] = []
         items.append(GridCell(image: GridCell.circle(symbol: "arrow.down.to.line", fill: Palette.primary, tint: Palette.onPrimary),
-                              title: "Simpan", toolTip: "Simpan di Downloads") { onAction(.save) })
+                              title: L("Save", "Simpan"), toolTip: L("Keep in Downloads", "Simpan di Downloads")) { onAction(.save) })
         for app in shown {
             let icon = Self.loadedIcon(app)
-            items.append(GridCell(image: icon, title: ReceivedPanel.appName(app), toolTip: "Buka dengan \(ReceivedPanel.appName(app))") {
+            items.append(GridCell(image: icon, title: ReceivedPanel.appName(app), toolTip: L("Open with \(ReceivedPanel.appName(app))", "Buka dengan \(ReceivedPanel.appName(app))")) {
                 onAction(.open(app))
             })
         }
         if !rest.isEmpty {
             var cell: GridCell!
             cell = GridCell(image: GridCell.circle(symbol: "ellipsis", fill: Palette.chip, tint: .labelColor),
-                            title: "Lainnya…", toolTip: "Aplikasi lain") { onAction(.more(rest, cell)) }
+                            title: L("More…", "Lainnya…"), toolTip: L("Other apps", "Aplikasi lain")) { onAction(.more(rest, cell)) }
             items.append(cell)
         }
         let finder = Self.loadedIcon(URL(fileURLWithPath: "/System/Library/CoreServices/Finder.app"))
-        items.append(GridCell(image: finder, title: "Finder", toolTip: "Tampilkan di Finder") { onAction(.finder) })
+        items.append(GridCell(image: finder, title: "Finder", toolTip: L("Show in Finder", "Tampilkan di Finder")) { onAction(.finder) })
 
         for (i, cell) in items.enumerated() {
             let col = CGFloat(i % Self.columns), row = CGFloat(i / Self.columns)
@@ -289,7 +289,7 @@ private final class ReceivedView: NSView {
         addSubview(thumbnail)
         loadThumbnail()
 
-        let title = NSTextField(labelWithString: urls.count == 1 ? urls[0].lastPathComponent : "\(urls.count) file dari HP")
+        let title = NSTextField(labelWithString: urls.count == 1 ? urls[0].lastPathComponent : L("\(urls.count) files from your device", "\(urls.count) file dari HP"))
         title.font = .systemFont(ofSize: 13.5, weight: .semibold)
         title.lineBreakMode = .byTruncatingMiddle
         title.frame = NSRect(x: p + 56, y: p + 5, width: width - p * 2 - 56 - 40, height: 18)
@@ -306,9 +306,9 @@ private final class ReceivedView: NSView {
 
         closeButton.frame = NSRect(x: width - p - 28, y: p + 10, width: 28, height: 28)
         closeButton.restingFill = Palette.chip
-        closeButton.image = NSImage(systemSymbolName: "xmark", accessibilityDescription: "Jangan simpan")?
+        closeButton.image = NSImage(systemSymbolName: "xmark", accessibilityDescription: L("Don't keep", "Jangan simpan"))?
             .withSymbolConfiguration(.init(pointSize: 12, weight: .semibold))
-        closeButton.toolTip = "Jangan simpan (pindah ke Tempat Sampah)"
+        closeButton.toolTip = L("Don't keep (move to Trash)", "Jangan simpan (pindah ke Tempat Sampah)")
         closeButton.onClick = { [weak self] in self?.onAction(.discard) }
         addSubview(closeButton)
     }

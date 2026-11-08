@@ -6,7 +6,7 @@ import AppKit
 /// Drag-and-drop asli macOS: lepas file di sini → dikirim ke HP.
 final class DropZone {
     var onDrop: (([URL]) -> Void)?
-    var deviceName = "HP" {
+    var deviceName = L("Android", "HP") {
         didSet { view?.deviceName = deviceName }
     }
 
@@ -82,7 +82,7 @@ final class DropZone {
         view.deviceName = deviceName
         view.onDrop = { [weak self] urls in
             self?.onDrop?(urls)
-            self?.hideSoon(after: 0.9) // biarkan "Terkirim ✓" terlihat
+            self?.hideSoon(after: 0.9) // biarkan L("Sent ✓", "Terkirim ✓") terlihat
         }
         panel.contentView = view
         self.panel = panel
@@ -100,7 +100,7 @@ private final class MistView: NSView {
     var side: FoldSide = .right {
         didSet { if side != oldValue { applyShape() } }
     }
-    var deviceName = "HP" { didSet { if !sent { title.stringValue = deviceName } } }
+    var deviceName = L("Android", "HP") { didSet { if !sent { title.stringValue = deviceName } } }
     private(set) var highlighted = false
     private(set) var isDisappearing = false
     private var sent = false
@@ -112,7 +112,7 @@ private final class MistView: NSView {
     private let content = NSView()
     private let icon = NSImageView()
     private let title = NSTextField(labelWithString: "")
-    private let subtitle = NSTextField(labelWithString: "Lepas untuk mengirim")
+    private let subtitle = NSTextField(labelWithString: L("Drop to send", "Lepas untuk mengirim"))
     private var shapedSize = NSSize.zero
 
     /// Jari-jari elips: horizontal (dari tepi layar) × vertikal.
@@ -210,7 +210,7 @@ private final class MistView: NSView {
         sent = false
         highlighted = false
         title.stringValue = deviceName
-        subtitle.stringValue = "Lepas untuk mengirim"
+        subtitle.stringValue = L("Drop to send", "Lepas untuk mengirim")
         icon.image = Self.symbol("iphone")
         icon.contentTintColor = .labelColor
         [near, wide, sheen, content].forEach { $0.alphaValue = 0 }
@@ -238,8 +238,8 @@ private final class MistView: NSView {
     private func playSent() {
         sent = true
         icon.image = Self.symbol("checkmark.circle.fill")
-        title.stringValue = "Terkirim"
-        subtitle.stringValue = "ke \(deviceName)"
+        title.stringValue = L("Sent", "Terkirim")
+        subtitle.stringValue = L("to \(deviceName)", "ke \(deviceName)")
         fade(0.12, { sheen.animator().alphaValue = 0.3 }, done: { [weak self] in
             guard let self, !self.isDisappearing else { return }
             self.fade(0.3) { self.sheen.animator().alphaValue = 1 }
