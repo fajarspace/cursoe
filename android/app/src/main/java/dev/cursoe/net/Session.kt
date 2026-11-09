@@ -33,7 +33,7 @@ class Session(private val socket: Socket, private val host: Host) {
         fun onAuthenticated(session: Session)
         fun onClosed(session: Session, reason: String)
         fun onMessage(session: Session, type: String, message: JSONObject)
-        /** Frame biner [0x01][16 byte UUID][data] (potongan file). Thread pembaca. */
+        /** Frame biner: [0x01][16 byte UUID][data] (potongan file) atau [0x02][id][data] (port forwarding). Thread pembaca. */
         fun onBinary(session: Session, frame: ByteArray)
     }
 
@@ -124,7 +124,7 @@ class Session(private val socket: Socket, private val host: Host) {
             handshake()
             while (!closed.get()) {
                 val plaintext = channel!!.open(Wire.readFrame(input))
-                if (plaintext.isNotEmpty() && plaintext[0] == BINARY_MARKER) {
+                if (plaintext.isNotEmpty() && (plaintext[0] == BINARY_MARKER || plaintext[0] == PortForwarder.MARKER)) {
                     if (authenticated) host.onBinary(this, plaintext)
                     continue
                 }

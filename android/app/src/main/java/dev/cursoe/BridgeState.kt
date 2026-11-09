@@ -18,6 +18,8 @@ object BridgeState {
         val screen: String = "",
         val remote: Boolean = false,
         val cursorReady: Boolean = false,
+        /** Port localhost HP yang sedang diteruskan ke Mac (port forwarding). */
+        val forwardedPorts: List<Int> = emptyList(),
     )
 
     @Volatile

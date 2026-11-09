@@ -27,6 +27,7 @@ import dev.cursoe.files.FileBridge
 import dev.cursoe.files.FileTransfer
 import dev.cursoe.ime.KeyboardStatus
 import dev.cursoe.net.BridgeServer
+import dev.cursoe.net.PortForwarder
 import dev.cursoe.net.Session
 import org.json.JSONObject
 import kotlin.concurrent.thread
@@ -42,6 +43,7 @@ class BridgeService : Service(), Session.Host {
     private lateinit var displays: DisplayManager
     private var clipboardSync: ClipboardSync? = null
     private var fileTransfer: FileTransfer? = null
+    private var portForwarder: PortForwarder? = null
     private val main = Handler(Looper.getMainLooper())
     @Volatile private var destroyed = false
     private var statusText = tr("Waiting for Mac…", "Menunggu Mac…")
@@ -116,6 +118,7 @@ class BridgeService : Service(), Session.Host {
         getSystemService(android.net.ConnectivityManager::class.java).registerDefaultNetworkCallback(networkCallback, main)
         InputRouter.onReadyChanged = { pushScreenInfo() }
         fileTransfer = FileTransfer(this) { server.current }.also { FileBridge.transfer = it }
+        portForwarder = PortForwarder { server.current }
         clipboardSync = ClipboardSync(this) { server.current }.also { sync ->
             sync.start()
             InputRouter.beforeKeyboardRestore = { sync.pushCurrent("kursor kembali ke Mac") }
@@ -162,6 +165,8 @@ class BridgeService : Service(), Session.Host {
         clipboardSync = null
         FileBridge.transfer = null
         fileTransfer?.shutdown()
+        portForwarder?.stopAll()
+        portForwarder = null
         fileTransfer = null
         contentResolver.unregisterContentObserver(keyboardObserver)
         runCatching { unregisterReceiver(dismissReceiver) }
@@ -233,6 +238,7 @@ class BridgeService : Service(), Session.Host {
         InputRouter.disconnected()
         setRemoteWifiLock(false)
         fileTransfer?.abortIncoming()
+        portForwarder?.stopAll()
         BridgeState.update {
             it.copy(connected = false, macName = null, status = tr("Waiting for Mac… (last: $reason)", "Menunggu Mac… (terakhir: $reason)"))
         }
@@ -251,6 +257,10 @@ class BridgeService : Service(), Session.Host {
             fileTransfer?.handle(type, message)
             return
         }
+        if (type == "FORWARD" || type.startsWith("TUNNEL_")) {
+            portForwarder?.handle(type, message)
+            return
+        }
         when (type) {
             "ENTER" -> setRemoteWifiLock(true)
             "EXIT" -> setRemoteWifiLock(false)
@@ -259,7 +269,8 @@ class BridgeService : Service(), Session.Host {
     }
 
     override fun onBinary(session: Session, frame: ByteArray) {
-        if (session === server.current) fileTransfer?.onChunk(frame)
+        if (session !== server.current) return
+        if (frame[0] == PortForwarder.MARKER) portForwarder?.onData(frame) else fileTransfer?.onChunk(frame)
     }
 
     private fun setRemoteWifiLock(on: Boolean) {

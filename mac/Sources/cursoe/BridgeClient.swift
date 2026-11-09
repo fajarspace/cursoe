@@ -125,6 +125,8 @@ final class BridgeClient {
     var networkQueue: DispatchQueue { queue }
     /// Transfer file (dipanggil di `queue`).
     weak var fileHandler: FileTransferHandler?
+    /// Port forwarding (localhost HP → localhost Mac).
+    weak var tunnelHandler: TunnelHandler?
     private let identity = MacIdentity.load()
     private var browser: NWBrowser?
     private var results: [NWBrowser.Result] = []
@@ -487,6 +489,7 @@ final class BridgeClient {
             Log.info("Putus dari \(s.name): \(reason)")
             session = nil
             fileHandler?.connectionLost()
+            tunnelHandler?.tunnelSessionEnded()
             s.connection.stateUpdateHandler = nil
             s.connection.cancel()
             if case .awaitingPin = snapshot.state {
@@ -542,6 +545,12 @@ final class BridgeClient {
         guard let s = session, s.authenticated else { return false }
         sendSealed(plaintext, on: s, then: then)
         return true
+    }
+
+    /// Data port forwarding (frame [0x02][id][data]) dari luar antrean. `then` dipanggil setelah frame diproses
+    /// jaringan; tidak dipanggil bila tidak terhubung (aliran lalu ditutup saat sesi berakhir).
+    func sendTunnelData(_ frame: Data, then: @escaping () -> Void) {
+        queue.async { _ = self.sendBinaryOnQueue(frame, then: then) }
     }
 
     private func sendSealed(_ plaintext: Data, on s: Session, then: (() -> Void)? = nil) {
@@ -622,6 +631,13 @@ final class BridgeClient {
             plaintext = try channel.open(payload)
         } catch {
             teardown(L("message could not be decrypted (\(error))", "pesan gagal didekripsi (\(error))"))
+            return
+        }
+        if plaintext.first == PortForwarder.binaryMarker {
+            // [0x02][UInt32 id][data]: data port forwarding
+            guard s.authenticated, plaintext.count > 5 else { return }
+            let id = plaintext[(plaintext.startIndex + 1) ..< (plaintext.startIndex + 5)].reduce(UInt32(0)) { $0 << 8 | UInt32($1) }
+            tunnelHandler?.handleTunnelData(id, plaintext.subdata(in: plaintext.startIndex + 5 ..< plaintext.endIndex))
             return
         }
         if plaintext.first == FileTransfer.binaryMarker {
@@ -721,6 +737,10 @@ final class BridgeClient {
             guard s.authenticated else { return }
             fileHandler?.handleFileMessage(type, m)
 
+        case "TUNNEL_OPEN", "TUNNEL_EOF", "TUNNEL_CLOSE":
+            guard s.authenticated else { return }
+            tunnelHandler?.handleTunnelMessage(type, m)
+
         case "LEAVE", "CLIPBOARD", "CLIP_IMAGE_BEGIN", "CLIP_IMAGE_DATA", "CLIP_IMAGE_END":
             guard s.authenticated else { return }
             DispatchQueue.main.async { self.onRemoteMessage?(type, m) }
@@ -759,6 +779,7 @@ final class BridgeClient {
         snapshot.state = .connected(s.name)
         publish()
         Log.info("Terhubung & terautentikasi dengan \(s.name)")
+        tunnelHandler?.tunnelSessionStarted()
     }
 
     private func askPin(on s: Session, message: String?) {

@@ -211,7 +211,14 @@ class MainActivity : Activity() {
         stateTitle.text = title
         stateSubtitle.text = subtitle
         stateSubtitle.visibility = if (subtitle.isEmpty()) View.GONE else View.VISIBLE
-        val hint = if (wanted && s.connected && s.cursorReady && !s.remote) tr("Press ⌘⌥T on your Mac to start", "⌘⌥T di Mac untuk mulai") else ""
+        val start = if (wanted && s.connected && s.cursorReady && !s.remote) tr("Press ⌘⌥T on your Mac to start", "⌘⌥T di Mac untuk mulai") else ""
+        // Port forwarding aktif: tampilkan alamat yang bisa dibuka di HP.
+        val forwarded = if (s.connected && s.forwardedPorts.isNotEmpty()) {
+            s.forwardedPorts.joinToString(", ") { "localhost:$it" } + " → Mac"
+        } else {
+            ""
+        }
+        val hint = listOf(start, forwarded).filter { it.isNotEmpty() }.joinToString("\n")
         stateHint.text = hint
         stateHint.visibility = if (hint.isEmpty()) View.GONE else View.VISIBLE
 

@@ -25,7 +25,7 @@ fi
 BUNDLE_ID="dev.cursoe.mac"
 APP_NAME="cursoe"   # nama executable (internal)
 DISPLAY_NAME="Cursoe"
-VERSION="1.0.0"
+VERSION="1.1.0"
 BUILD_NUMBER="2"
 
 echo "==> swift build -c $CONFIG"

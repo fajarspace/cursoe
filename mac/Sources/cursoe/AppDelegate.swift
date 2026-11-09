@@ -17,6 +17,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private lazy var remote = RemoteController(client: client)
     private lazy var clipboard = ClipboardSync(client: client)
     private lazy var files = FileTransfer(client: client)
+    private lazy var forwarder = PortForwarder(client: client)
+    private let forwardMenu = NSMenu()
     private let transferLine = NSMenuItem(title: "", action: nil, keyEquivalent: "")
     private var clipboardItem: NSMenuItem!
     private var sendFilesItem: NSMenuItem!
@@ -65,6 +67,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         Notifier.shared.setup()
         client.fileHandler = files
+        client.tunnelHandler = forwarder
         files.onStatus = { [weak self] status in
             self?.transferLine.title = status ?? ""
             self?.transferLine.isHidden = status == nil
@@ -182,6 +185,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(.separator())
         menu.addItem(sideMenuItem())
         menu.addItem(connectionMenuItem())
+        menu.addItem(forwardMenuItem())
         menu.addItem(settingsMenuItem())
 
         menu.addItem(.separator())
@@ -350,6 +354,74 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let parent = NSMenuItem(title: L("Connection", "Koneksi"), action: nil, keyEquivalent: "")
         parent.submenu = submenu
         return parent
+    }
+
+    /// Port forwarding: daftar port (tiap port punya submenu "Hapus") + "Tambah Port…".
+    private func forwardMenuItem() -> NSMenuItem {
+        forwardMenu.autoenablesItems = false
+        rebuildForwardMenu()
+        let parent = NSMenuItem(title: L("Port Forwarding", "Teruskan Port"), action: nil, keyEquivalent: "")
+        parent.submenu = forwardMenu
+        return parent
+    }
+
+    private func rebuildForwardMenu() {
+        forwardMenu.removeAllItems()
+        let caption = NSMenuItem(title: L("localhost on your device → this Mac", "localhost di HP → Mac ini"), action: nil, keyEquivalent: "")
+        caption.isEnabled = false
+        forwardMenu.addItem(caption)
+        let ports = forwarder.ports
+        if ports.isEmpty {
+            let none = NSMenuItem(title: L("No ports yet", "Belum ada port"), action: nil, keyEquivalent: "")
+            none.isEnabled = false
+            forwardMenu.addItem(none)
+        }
+        for port in ports {
+            let remove = item(L("Remove", "Hapus"), #selector(removeForwardPort(_:)))
+            remove.tag = port
+            let actions = NSMenu()
+            actions.addItem(remove)
+            let row = NSMenuItem(title: "localhost:\(port)", action: nil, keyEquivalent: "")
+            row.submenu = actions
+            forwardMenu.addItem(row)
+        }
+        forwardMenu.addItem(.separator())
+        forwardMenu.addItem(item(L("Add Port…", "Tambah Port…"), #selector(addForwardPort)))
+    }
+
+    @objc private func addForwardPort() {
+        NSApp.activate()
+        let alert = NSAlert()
+        alert.messageText = L("Forward a Port", "Teruskan Port")
+        alert.informativeText = L(
+            "Apps on your device can open http://localhost:PORT to reach the same port on this Mac, for example a " +
+                "local dev server. Use a port from 1024 to 65535. Any app on the device can use a forwarded port.",
+            "Aplikasi di HP bisa membuka http://localhost:PORT untuk mengakses port yang sama di Mac ini, mis. server " +
+                "dev lokal. Gunakan port 1024–65535. Semua aplikasi di HP bisa memakai port yang diteruskan."
+        )
+        let field = NSTextField(frame: NSRect(x: 0, y: 0, width: 140, height: 24))
+        field.placeholderString = "5173"
+        alert.accessoryView = field
+        alert.addButton(withTitle: L("Forward", "Teruskan"))
+        alert.addButton(withTitle: L("Cancel", "Batal"))
+        alert.window.initialFirstResponder = field
+        guard alert.runModal() == .alertFirstButtonReturn else { return }
+        let text = field.stringValue.trimmingCharacters(in: .whitespaces)
+            .replacingOccurrences(of: "localhost:", with: "")
+        guard let port = Int(text), PortForwarder.allowedPorts.contains(port) else {
+            let error = NSAlert()
+            error.messageText = L("Invalid port", "Port tidak valid")
+            error.informativeText = L("Enter a number from 1024 to 65535.", "Masukkan angka 1024 sampai 65535.")
+            error.runModal()
+            return
+        }
+        forwarder.add(port)
+        rebuildForwardMenu()
+    }
+
+    @objc private func removeForwardPort(_ sender: NSMenuItem) {
+        forwarder.remove(sender.tag)
+        rebuildForwardMenu()
     }
 
     private func settingsMenuItem() -> NSMenuItem {

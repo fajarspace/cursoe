@@ -43,6 +43,7 @@ labels.
 | Arrows, with ⇧, ⌥ or ⌘ | Move the text cursor, select, by word, to line or document start/end |
 | ⌘A ⌘C ⌘X ⌘V ⌘Z ⌘⇧Z | Select all, copy, cut, paste, undo, redo |
 | Esc / ⌘H / ⌘⇥ | Back / Home / Recent apps |
+| ⌘+ / ⌘− / ⌘0 | Sent as Ctrl + = / − / 0, like a hardware keyboard: page zoom in Chrome (zoom in, zoom out, reset). For other apps, pinch on the trackpad |
 | ⌘⇧S | Area screenshot: the screen freezes, drag to select (Enter = full screen, Esc = cancel). Saved to *Pictures/Screenshots* and copied to the clipboard, ready for ⌘V on the Mac. Android 11+; Android 9–10 captures the full screen |
 
 ## Clipboard
@@ -68,6 +69,24 @@ labels.
   open the file, or **Finder**. **×** moves the file to the Trash; clicking outside, Esc or Return keeps it.
 - From any app: **Share › Send to Mac**.
 
+## Port forwarding
+
+Open a server that runs on your Mac (for example a local dev server) from apps on Android, using the same address:
+`http://localhost:PORT` on the device reaches `localhost:PORT` on the Mac. It works like `adb reverse`, but over the
+Cursoe connection, so it also works over the hotspot or Wi-Fi and needs no USB debugging.
+
+1. In the Mac menu, choose **Port Forwarding › Add Port…** and enter the port, for example `5173`.
+2. On Android, open `http://localhost:5173` in Chrome or any other app.
+
+- The Cursoe app on Android shows the forwarded ports under the connection status, for example
+  `localhost:5173 → Mac`.
+- Use ports from 1024 to 65535; Android does not let apps open lower ports.
+- The server on the Mac can keep listening on `localhost` only. There is no need for `--host` or `0.0.0.0`.
+- To stop forwarding a port, choose it under **Port Forwarding** and click **Remove**. Forwarded ports are saved and
+  reopen automatically whenever the devices connect.
+- Any app on the Android device can use a forwarded port, as with `adb reverse`. The Mac only accepts the ports you
+  added.
+
 ## Settings
 
 **Mac menu** (cursor icon in the menu bar)
@@ -80,6 +99,7 @@ labels.
 | Send File… | Choose a file to send to Android |
 | Device Position › Right / Left | Which side of the Mac the device is on |
 | Connection › | Automatic / USB Cable / Wi-Fi / Hotspot, Reconnect, Connect by IP Address…, cable status |
+| Port Forwarding › | Forwarded ports, Add Port…, Remove |
 | Settings › | Open at Login, Debug Log, Forget All Pairings, version |
 
 **Android app**

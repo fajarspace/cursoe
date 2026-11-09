@@ -22,6 +22,8 @@ runs its own apps.
 - **Drag and drop files.** Drag a file from Finder to the screen edge to send it to Android, or drag a photo from
   the Android gallery to the Mac.
 - **Area screenshots.** Press ⌘⇧S on the Mac to capture part of the Android screen.
+- **Port forwarding.** Open `localhost:PORT` on Android to reach a dev server running on your Mac, like
+  `adb reverse` but over any connection.
 - **USB cable, hotspot or Wi-Fi.**
 - **Private.** Your devices connect directly to each other. No account, no cloud. Pairing uses a 6-digit PIN and
   everything is encrypted.

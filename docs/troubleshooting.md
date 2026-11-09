@@ -12,6 +12,7 @@
 | A gallery photo is rejected when dragged to the Mac | Allow *Photos and videos › Allow all* for Cursoe, or use *Share › Send to Mac*. |
 | The Mac does not see the USB-tethered device | Check the mode in the Cursoe settings screen. macOS needs NCM, not RNDIS; see [Connection](connection.md#usb-cable). |
 | A banking app refuses to open | Turn off the Cursoe accessibility service in Android Settings while using it, and turn off USB debugging. See [Usage](usage.md#banking-and-security-apps). |
+| `localhost:PORT` does not load on Android | Check that the port is listed under **Port Forwarding** on the Mac and that the server is running there (`curl localhost:PORT` on the Mac). The Android app shows the forwarded ports under the connection status. Ports below 1024 cannot be forwarded. |
 | Scrolling stutters | Use the USB cable or the device's hotspot. Turn on the debug log and check `adb logcat -s CursoeDbg`. |
 
 ## Known limitations

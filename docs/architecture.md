@@ -72,6 +72,7 @@ contains either JSON (`{"t": "TYPE", …}`) or a binary file chunk `[0x01][16-by
 | Input | `MOVE {dx,dy,ts}`, `BUTTON {button,down}`, `SCROLL {dx,dy,ts,end}`, `PINCH {mag,ts,end}`, `SMART_ZOOM`, `KEY {key,mods}`, `TEXT {text}` |
 | Clipboard | `CLIPBOARD {text}`, `CLIP_IMAGE_BEGIN` / `DATA` / `END` |
 | Files | `FILE_BEGIN {id,name,size,mime,index,count,share}` → binary chunks → `FILE_END {sha256}` → `FILE_RESULT` |
+| Port forwarding | `FORWARD {ports}`, `TUNNEL_OPEN {id,port}` → binary data `[0x02][UInt32 id][data]` both ways → `TUNNEL_EOF {id}` (half-close) / `TUNNEL_CLOSE {id}` (abort) |
 
 **Why JSON?** Movement and scroll events are coalesced to at most about 120 messages per second, a few KB/s. JSON
 parsing takes microseconds, far below network latency, and is easy to debug. Only file contents are binary.
@@ -81,6 +82,22 @@ parsing takes microseconds, far below network latency, and is easy to debug. Onl
 - Segment durations come from the Mac's timestamps, with a 24 ms jitter buffer and at most about 48 ms queued.
 - Coordinates are rounded to whole pixels; otherwise the system rejects stroke continuations.
 - Near the screen edge, the virtual finger is lifted with `ACTION_CANCEL` and placed again, so no stray fling occurs.
+
+## Port forwarding
+
+`PortForwarder` (Mac) and `net/PortForwarder` (Android) tunnel TCP connections from `localhost:PORT` on Android to
+`localhost:PORT` on the Mac through the encrypted session.
+
+- The Mac sends `FORWARD {ports}` after authentication and whenever the list changes. Android opens a server socket on
+  `127.0.0.1` and `::1` for each port, and closes them when the session ends.
+- Each accepted connection becomes a stream: `TUNNEL_OPEN {id, port}`, data frames in both directions, and
+  `TUNNEL_EOF` when one side finishes sending, so TCP half-close behaves as on a direct connection. `TUNNEL_CLOSE`
+  aborts a stream.
+- The Mac connects to `localhost` (not `127.0.0.1`), so servers that listen only on IPv6 `::1`, such as recent
+  Node.js and Vite versions, are reachable.
+- Flow control: each side sends the next 32 KB chunk only after the previous one was handed to the network (Mac) or
+  while the session queue is short (Android), so cursor messages are not stuck behind large downloads.
+- The Mac refuses ports that the user did not add.
 
 ## Security model
 

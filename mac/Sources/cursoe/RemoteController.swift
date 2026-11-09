@@ -163,6 +163,7 @@ final class RemoteController: InputCaptureDelegate {
             return
         }
         guard let nsEvent = NSEvent(cgEvent: event) else { return }
+        // Termasuk ⌘+ / ⌘− / ⌘0: HP mengubahnya ke Ctrl + = / − / 0 (page zoom di Chrome, seperti di desktop).
         if flags.contains(.maskCommand) || flags.contains(.maskControl) {
             guard let base = nsEvent.charactersIgnoringModifiers?.lowercased(), !base.isEmpty else { return }
             client.send(["t": "KEY", "key": base, "mods": mods])

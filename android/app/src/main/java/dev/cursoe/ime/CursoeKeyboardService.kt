@@ -90,6 +90,11 @@ class CursoeKeyboardService : InputMethodService() {
                 "x" -> return ic.performContextMenuAction(android.R.id.cut)
                 "v" -> return ic.performContextMenuAction(android.R.id.paste)
                 "z" -> return sendKey(ic, KeyEvent.KEYCODE_Z, CTRL or shiftMeta) // ⌘⇧Z = redo
+                // ⌘+ / ⌘− / ⌘0 → Ctrl + = / − / 0, seperti keyboard fisik: page zoom di Chrome (teks & tata letak
+                // ikut membesar, halaman menata ulang), bukan pinch (yang hanya memperbesar tampilan).
+                "=", "+" -> return sendKey(ic, KeyEvent.KEYCODE_EQUALS, CTRL)
+                "-" -> return sendKey(ic, KeyEvent.KEYCODE_MINUS, CTRL)
+                "0" -> return sendKey(ic, KeyEvent.KEYCODE_0, CTRL)
             }
         }
         return when (name) {
